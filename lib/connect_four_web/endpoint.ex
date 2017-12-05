@@ -1,7 +1,7 @@
 defmodule ConnectFourWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :connect_four
 
-  socket "/socket", ConnectFourWeb.UserSocket
+  socket "/socket", ConnectFourWeb.PlayerSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
