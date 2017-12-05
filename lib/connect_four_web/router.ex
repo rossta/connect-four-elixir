@@ -5,7 +5,9 @@ defmodule ConnectFourWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ConnectFourWeb do
+  scope "/", ConnectFourWeb do
     pipe_through :api
+
+    resources "/players", PlayerController
   end
 end

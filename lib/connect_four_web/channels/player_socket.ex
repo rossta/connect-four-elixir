@@ -1,8 +1,10 @@
 defmodule ConnectFourWeb.PlayerSocket do
+  require Logger
   use Phoenix.Socket
 
   ## Channels
   # channel "room:*", ConnectFourWeb.RoomChannel
+  channel "lobby", ConnectFourWeb.LobbyChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -19,6 +21,10 @@ defmodule ConnectFourWeb.PlayerSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
+  def connect(%{"id" => player_id}, socket) do
+    Logger.info("Socket connected: " <> player_id)
+    {:ok, assign(socket, :player_id, player_id)}
+  end
   def connect(_params, socket) do
     {:ok, socket}
   end
