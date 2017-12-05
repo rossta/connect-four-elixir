@@ -1,4 +1,4 @@
-defmodule ConnectFourWeb.UserSocket do
+defmodule ConnectFourWeb.PlayerSocket do
   use Phoenix.Socket
 
   ## Channels
@@ -9,11 +9,11 @@ defmodule ConnectFourWeb.UserSocket do
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
-  # be used to verify and authenticate a user. After
+  # be used to verify and authenticate a player. After
   # verification, you can put default assigns into
   # the socket that will be set for all channels, ie
   #
-  #     {:ok, assign(socket, :user_id, verified_user_id)}
+  #     {:ok, assign(socket, :player_id, verified_player_id)}
   #
   # To deny connection, return `:error`.
   #
@@ -23,14 +23,14 @@ defmodule ConnectFourWeb.UserSocket do
     {:ok, socket}
   end
 
-  # Socket id's are topics that allow you to identify all sockets for a given user:
+  # Socket id's are topics that allow you to identify all sockets for a given player:
   #
-  #     def id(socket), do: "user_socket:#{socket.assigns.user_id}"
+  #     def id(socket), do: "player_socket:#{socket.assigns.player_id}"
   #
   # Would allow you to broadcast a "disconnect" event and terminate
-  # all active sockets and channels for a given user:
+  # all active sockets and channels for a given player:
   #
-  #     ConnectFourWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
+  #     ConnectFourWeb.Endpoint.broadcast("player_socket:#{player.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil
