@@ -20,7 +20,7 @@ defmodule ConnectFour.Mixfile do
   def application do
     [
       mod: {ConnectFour.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :corsica]
     ]
   end
 
@@ -38,7 +38,8 @@ defmodule ConnectFour.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:corsica, "~> 1.0"}
     ]
   end
 
