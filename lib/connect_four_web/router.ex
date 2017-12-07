@@ -9,5 +9,6 @@ defmodule ConnectFourWeb.Router do
     pipe_through :api
 
     resources "/players", PlayerController
+    resources "/games", GameController
   end
 end

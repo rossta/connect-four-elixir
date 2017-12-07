@@ -5,6 +5,7 @@ defmodule ConnectFourWeb.PlayerSocket do
   ## Channels
   # channel "room:*", ConnectFourWeb.RoomChannel
   channel "lobby", ConnectFourWeb.LobbyChannel
+  channel "game:*", ConnectFourWeb.GameChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
