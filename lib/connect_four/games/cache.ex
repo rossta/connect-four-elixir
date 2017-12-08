@@ -10,31 +10,36 @@ defmodule ConnectFour.Games.Cache do
     GenServer.start_link(__MODULE__, nil, name: :game_cache)
   end
 
-  def init(_) do
-    {:ok, Map.new}
-  end
-
   def game_server(game_id) do
-    GenServer.call(:game_cache, {:game_server, game_id})
-  end
+    case Games.Server.whereis(game_id) do
+      :undefined ->
+        {:error, "Game #{game_id} does not exist."}
 
-  def start_game_server(game_id) do
-    GenServer.call(:game_cache, {:start_game_server, game_id})
-  end
-
-  def handle_call({:game_server, game_id}, _, game_servers) do
-    case Map.fetch(game_servers, game_id) do
-      {:ok, game_server} ->
-        {:reply, game_server, game_servers}
-
-      :error ->
-        {:error, "Game does not exist"}
+      game_server ->
+        {:ok, game_server}
     end
   end
 
-  def handle_call({:start_game_server, game_id}, _, game_servers) do
-    {:ok, new_server} = Games.Server.start_link(game_id)
+  def start_game_server(game_id) do
+    case Games.Server.whereis(game_id) do
+      :undefined ->
+        GenServer.call(:game_cache, {:start_game_server, game_id})
 
-    {:reply, new_server, Map.put(game_servers, game_id, new_server)}
+      game_server ->
+        {:ok, game_server}
+    end
+  end
+
+  def handle_call({:start_game_server, game_id}, _, state) do
+    game_server = case Games.Server.whereis(game_id) do
+      :undefined ->
+        {:ok, new_pid} = Games.ServerSupervisor.start_child(game_id)
+        new_pid
+
+      pid ->
+        pid
+    end
+
+    {:reply, {:ok, game_server}, state}
   end
 end

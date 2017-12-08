@@ -13,6 +13,8 @@ defmodule ConnectFourWeb.GameController do
 
   def create(conn, %{}) do
     with {:ok, %Game{} = game} <- Games.create_game() do
+      # ConnectFour.Endpoint.broadcast("lobby", "update_games", %{games: Games.Supervisor.current_games})
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", game_path(conn, :show, game))

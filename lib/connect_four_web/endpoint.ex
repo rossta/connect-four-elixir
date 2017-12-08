@@ -36,7 +36,9 @@ defmodule ConnectFourWeb.Endpoint do
   #   key: "_connect_four_key",
   #   signing_salt: "YV7mtR2D"
 
-  plug Corsica, origins: "*"
+  plug Corsica, origins: "*",
+    allow_credentials: true,
+    expose_headers: ~w(location content-length x-request-id)
 
   plug ConnectFourWeb.Router
 

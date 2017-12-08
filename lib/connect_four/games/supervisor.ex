@@ -1,16 +1,18 @@
 defmodule ConnectFour.Games.Supervisor do
   use Supervisor
 
-  alias ConnectFour.Games.{Server}
+  alias ConnectFour.{Games}
 
   def start_link, do: Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
 
   def init(:ok) do
     children = [
-      worker(Server, [], restart: :temporary)
+      worker(Registry, [[keys: :unique, name: :game_server_registry]]),
+      supervisor(Games.ServerSupervisor, []),
+      worker(Games.Cache, [])
     ]
 
-    supervise(children, strategy: :simple_one_for_one)
+    supervise(children, strategy: :one_for_one)
   end
 
   # def create_game(id), do: Supervisor.start_child(__MODULE__, [id])

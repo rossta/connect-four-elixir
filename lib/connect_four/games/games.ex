@@ -3,8 +3,8 @@ defmodule ConnectFour.Games do
   The Games context.
   """
 
-  import Ecto.Query, warn: false
-  alias ConnectFour.Repo
+  # import Ecto.Query, warn: false
+  # alias ConnectFour.Repo
 
   alias ConnectFour.{Games}
   alias ConnectFour.Games.{Player, Game}
@@ -155,11 +155,12 @@ defmodule ConnectFour.Games do
          |> Base.url_encode64()
          |> binary_part(0, @id_length)
 
-    Games.Cache.create_game(id)
-
-    # ConnectFour.Endpoint.broadcast("lobby", "update_games", %{games: Games.Supervisor.current_games})
-
-    {:ok, %Game{id: id}}
+    case Games.Cache.start_game_server(id) do
+      {:ok, _pid} ->
+        {:ok, %Game{id: id}}
+      err ->
+        err
+    end
   end
 
   # @doc """
