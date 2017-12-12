@@ -14,7 +14,7 @@ defmodule ConnectFourWeb.GameChannel do
            {:ok, _} <- Games.Server.join(game_server, player_id, socket.channel_pid) do
         Process.monitor(game_server)
 
-        {:ok, socket}
+        {:ok, assign(socket, :game_id, game_id)}
       else
         {:error, reason} ->
 
@@ -24,6 +24,30 @@ defmodule ConnectFourWeb.GameChannel do
 
     else
       {:error, %{reason: "unauthorized"}}
+    end
+  end
+
+  def handle_in("game:joined", _message, socket) do
+    player_id = socket.assigns.player_id
+    game_id = socket.assigns.game_id
+
+    Logger.debug "Broadcasting player joined #{game_id}"
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("game:status", _message, socket) do
+    player_id = socket.assigns.player_id
+    game_id = socket.assigns.game_id
+
+    Logger.debug "Broadcasting player joined #{game_id}"
+
+    case Games.Cache.game_server(game_id) do
+      {:ok, game_server} ->
+        reply = Games.Server.game(game_server, player_id)
+        {:reply, {:ok, reply}, socket}
+
+      {:error, reason} ->
+        {:stop, :shutdown, {:error, %{reason: reason}}, socket}
     end
   end
 
