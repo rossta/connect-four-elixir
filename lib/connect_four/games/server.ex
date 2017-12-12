@@ -29,8 +29,13 @@ defmodule ConnectFour.Games.Server do
     GenServer.call(game_server, {:join, player_id, channel_pid})
   end
 
-  def status(game_server) do
-    GenServer.call(game_server, :status)
+  def game(game_server), do: GenServer.call(game_server, :game)
+  def game(game_server, player_id) do
+    GenServer.call(game_server, {:game, player_id})
+  end
+
+  def move(game_server, player_id, column) do
+    GenServer.call(game_server, {:move, player_id, column})
   end
 
   # Server
@@ -52,8 +57,27 @@ defmodule ConnectFour.Games.Server do
     end
   end
 
-  def handle_call(:status, _from, game) do
-    {:reply, game, game}
+  def handle_call(:game, _from, game), do: {:reply, game, game}
+  def handle_call({:game, player_id}, _from, game) do
+    color = Game.which_player(game, player_id)
+    {:reply, %{game: game, color: color}, game}
+  end
+
+  def handle_call({:move, player_id, column}, _from, game) do
+    case Game.move(game, player_id, column) do
+      {:ok, new_game} ->
+        {:reply, :ok, new_game}
+
+      not_ok ->
+        {:reply, not_ok, game}
+    end
+  end
+
+  def handle_info({:DOWN, _ref, :process, _pid, info} = message, game) do
+    Logger.info "Handling message in Game #{game.id}"
+    Logger.info "#{inspect message}"
+
+    {:stop, :normal, game}
   end
 
   defp via_tuple(id), do: {:via, Registry, {:game_server_registry, id}}
