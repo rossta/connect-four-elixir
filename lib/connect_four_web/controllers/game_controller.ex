@@ -6,11 +6,6 @@ defmodule ConnectFourWeb.GameController do
 
   action_fallback ConnectFourWeb.FallbackController
 
-  # def index(conn, _params) do
-  #   games = Games.list_games()
-  #   render(conn, "index.json", games: games)
-  # end
-
   def create(conn, %{}) do
     with {:ok, %Game{} = game} <- Games.create_game() do
       # ConnectFour.Endpoint.broadcast("lobby", "update_games", %{games: Games.Supervisor.current_games})
@@ -21,6 +16,11 @@ defmodule ConnectFourWeb.GameController do
       |> render("show.json", game: game)
     end
   end
+
+  # def index(conn, _params) do
+  #   games = Games.list_games()
+  #   render(conn, "index.json", games: games)
+  # end
 
   # def show(conn, %{"id" => id}) do
   #   game = Games.get_game!(id)

@@ -6,11 +6,6 @@ defmodule ConnectFourWeb.PlayerController do
 
   action_fallback ConnectFourWeb.FallbackController
 
-  # def index(conn, _params) do
-  #   players = Games.list_players()
-  #   render(conn, "index.json", players: players)
-  # end
-
   def create(conn, %{}) do
     with {:ok, %Player{} = player} <- Games.create_player() do
       conn
@@ -19,6 +14,11 @@ defmodule ConnectFourWeb.PlayerController do
       |> render("show.json", player: player)
     end
   end
+
+  # def index(conn, _params) do
+  #   players = Games.list_players()
+  #   render(conn, "index.json", players: players)
+  # end
 
   # def show(conn, %{"id" => id}) do
   #   player = Games.get_player!(id)
