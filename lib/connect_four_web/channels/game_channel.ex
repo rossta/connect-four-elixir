@@ -10,7 +10,7 @@ defmodule ConnectFourWeb.GameChannel do
     if authorized?(payload) do
       player_id = socket.assigns.player_id
 
-      with {:ok, game_server} <- Games.Cache.game_server(game_id),
+      with {:ok, game_server} <- Games.Cache.server(game_id),
            {:ok, _} <- Games.Server.join(game_server, player_id, socket.channel_pid) do
         Process.monitor(game_server)
 
@@ -41,7 +41,7 @@ defmodule ConnectFourWeb.GameChannel do
 
     Logger.debug "Broadcasting player joined #{game_id}"
 
-    case Games.Cache.game_server(game_id) do
+    case Games.Cache.server(game_id) do
       {:ok, game_server} ->
         reply = Games.Server.game(game_server, player_id)
         {:reply, {:ok, reply}, socket}

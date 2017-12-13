@@ -9,7 +9,6 @@ defmodule ConnectFour.Games.Supervisor do
     children = [
       worker(Registry, [[keys: :unique, name: :game_server_registry]]),
       supervisor(Games.ServerSupervisor, []),
-      worker(Games.Cache, [])
     ]
 
     supervise(children, strategy: :one_for_one)

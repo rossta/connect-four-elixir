@@ -155,7 +155,7 @@ defmodule ConnectFour.Games do
          |> Base.url_encode64()
          |> binary_part(0, @id_length)
 
-    case Games.Cache.start_game_server(id) do
+    case Games.Cache.start_server(id) do
       {:ok, _pid} ->
         {:ok, %Game{id: id}}
       err ->
