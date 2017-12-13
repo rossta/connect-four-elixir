@@ -11,17 +11,33 @@ defmodule ConnectFour.Games.Board do
   ]
 
   def new() do
-    %Board{rows: @row, cols: @cols, cells: Map.new}
+    %Board{rows: @rows, cols: @cols, cells: Map.new}
   end
 
-  def drop_checker(board, {color, col}) do
-    row = open_row(board)
+  def drop_checker(%{rows: rows} = board, {col, color}) do
+    case open_row(board) do
+      row when row >= rows ->
+        {:error, :full_column}
 
-    %{board | cells: Map.put(board.cells, cell_key(row, col), {row, color, col})}
+      row ->
+        %{board | cells: Map.put(board.cells, cell_key(row, col), {row, col, color})}
+    end
+  end
+
+  def checker(board, {row, col}) do
+    case Map.fetch(board.cells, cell_key(row, col)) do
+      {:ok, checker} -> checker
+      :error -> {row, col, :empty}
+    end
   end
 
   defp open_row(board) do
-    board.cells |> Map.values |> Enum.max(fn -> 0 end)
+    row = board.cells
+          |> Map.values
+          |> Enum.map(fn {row, _, _} -> row end)
+          |> Enum.max(fn -> -1 end)
+
+    row + 1
   end
 
   def cell_key(row, col) do

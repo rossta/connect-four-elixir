@@ -2,8 +2,7 @@ defmodule ConnectFour.Games.ServerTest do
   use ExUnit.Case
   require Logger
 
-  # alias ConnectFour.Games.{Server, Game}
-  alias ConnectFour.Games.Server
+  alias ConnectFour.Games.{Server, Board}
 
   setup do
     {:ok, server} = Server.start_link("abc")
@@ -68,8 +67,8 @@ defmodule ConnectFour.Games.ServerTest do
     %{board: board, last: last, turns: [turn]} = Server.game(server)
 
     assert last == "player_1"
-    assert turn = {:red, col}
-    assert Map.get(board.cells, "#{row}#{col}", {row, col, :red})
+    assert turn == {col, :red}
+    assert {row, col, :red} == Board.checker(board, {row, col})
   end
 
   test "move out of turn", %{server: server} do

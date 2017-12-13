@@ -12,15 +12,15 @@ defmodule ConnectFour.Games.Game do
     board: Board.new
   ]
 
-  def move(%{board: board, turns: turns} = game, player_id, {_color, _column} = checker) do
+  def move(%{board: board, turns: turns} = game, player_id, {_col, _color} = checker) do
     board = Board.drop_checker(board, checker)
 
     {:ok, %{game | board: board, last: player_id, turns: [checker | turns]}}
   end
 
   def move(%{last: player_id}, player_id, _column), do: {:foul, "Not player's turn"}
-  def move(%{red: player_id} = game, player_id, column), do: move(game, player_id, {:red, column})
-  def move(%{black: player_id} = game, player_id, column), do: move(game, player_id, {:black, column})
+  def move(%{red: player_id} = game, player_id, column), do: move(game, player_id, {column, :red})
+  def move(%{black: player_id} = game, player_id, column), do: move(game, player_id, {column, :black})
   def move(%{black: black, red: red}, player_id, _column), do: {:foul, "Player not playing"}
 
   def add_player(%Game{red: nil} = game, player_id), do: %{game | red: player_id}
