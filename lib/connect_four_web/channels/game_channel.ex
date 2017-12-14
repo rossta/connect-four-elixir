@@ -31,7 +31,7 @@ defmodule ConnectFourWeb.GameChannel do
     player_id = socket.assigns.player_id
     game_id = socket.assigns.game_id
 
-    Logger.debug "Broadcasting player joined #{game_id}"
+    Logger.debug "Broadcasting player #{player_id} joined #{game_id}"
     {:reply, :ok, socket}
   end
 
@@ -45,6 +45,26 @@ defmodule ConnectFourWeb.GameChannel do
       {:ok, game_server} ->
         reply = Games.Server.game(game_server, player_id)
         {:reply, {:ok, reply}, socket}
+
+      {:error, reason} ->
+        {:stop, :shutdown, {:error, %{reason: reason}}, socket}
+    end
+  end
+
+  def handle_in("game:move", %{"col" => col}, socket) do
+    player_id = socket.assigns.player_id
+    game_id = socket.assigns.game_id
+
+    case Games.Cache.server(game_id) do
+      {:ok, game_server} ->
+        case Games.Server.move(game_server, player_id, col) do
+          {:ok, game} ->
+            broadcast!(socket, "game:status", game)
+            {:reply, :ok, socket}
+
+          other ->
+            {:reply, {:error, other}, socket}
+        end
 
       {:error, reason} ->
         {:stop, :shutdown, {:error, %{reason: reason}}, socket}

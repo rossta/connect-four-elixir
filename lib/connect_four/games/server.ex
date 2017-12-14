@@ -66,14 +66,14 @@ defmodule ConnectFour.Games.Server do
   def handle_call({:move, player_id, column}, _from, game) do
     case Game.move(game, player_id, column) do
       {:ok, new_game} ->
-        {:reply, :ok, new_game}
+        {:reply, {:ok, new_game}, new_game}
 
       not_ok ->
         {:reply, not_ok, game}
     end
   end
 
-  def handle_info({:DOWN, _ref, :process, _pid, info} = message, game) do
+  def handle_info({:DOWN, _ref, :process, _pid, _info} = message, game) do
     Logger.info "Handling message in Game #{game.id}"
     Logger.info "#{inspect message}"
 

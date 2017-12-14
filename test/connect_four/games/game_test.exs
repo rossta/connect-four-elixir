@@ -43,4 +43,20 @@ defmodule ConnectFour.Games.GameTest do
     assert nil == Game.which_player(game, "123")
     assert nil == Game.which_player(game, "abc")
   end
+
+  test "poison encoding", %{game: game} do
+    game = game |> Game.add_player("abc") |> Game.add_player("xyz")
+    json = game |> Poison.encode! |> Poison.Parser.parse!
+
+    assert %{
+      "black" => "xyz",
+      "red" => "abc",
+      "board" => %{"cells" => %{}, "cols" => 7, "rows" => 6},
+      "id" => nil,
+      "last" => nil,
+      "over" => false,
+      "turns" => [],
+      "winner" => nil
+    } == json
+  end
 end

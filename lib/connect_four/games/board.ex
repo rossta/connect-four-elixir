@@ -1,5 +1,7 @@
 defmodule ConnectFour.Games.Board do
+  @derive [Poison.Encoder]
   alias ConnectFour.Games.Board
+  require Logger
 
   @rows 6
   @cols 7
@@ -42,5 +44,22 @@ defmodule ConnectFour.Games.Board do
 
   def cell_key(row, col) do
     "#{row}#{col}"
+  end
+end
+
+defimpl Poison.Encoder, for: ConnectFour.Games.Board do
+  @moduledoc """
+  Implements Poison.Encoder for Board
+  """
+  def encode(%ConnectFour.Games.Board{rows: rows, cols: cols, cells: cells}, _options)  do
+    cells = for {key, {row, col, color}} <- cells, into: %{} do
+      {key, %{row: row, col: col, color: color}}
+    end
+
+    Poison.encode!(%{rows: rows, cols: cols, cells: cells})
+  end
+
+  def encode(board, _options) do
+    raise Poison.EncodeError, value: board
   end
 end

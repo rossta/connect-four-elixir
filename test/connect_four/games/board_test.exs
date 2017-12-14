@@ -41,4 +41,12 @@ defmodule ConnectFour.Games.BoardTest do
 
     assert {:error, :full_column} == Board.drop_checker(board, {1, :red})
   end
+
+  test "poison encoding", %{board: board} do
+    board = Board.drop_checker(board, {1, :red})
+    json = board |> Poison.encode! |> Poison.Parser.parse!
+
+    assert %{"cells" => %{"01" => %{"col" => 1, "color" => "red", "row" => 0}},
+      "cols" => 7, "rows" => 6} == json
+  end
 end
