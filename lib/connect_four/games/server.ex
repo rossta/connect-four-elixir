@@ -42,11 +42,11 @@ defmodule ConnectFour.Games.Server do
 
   def handle_call({:join, player_id, channel_pid}, _from, game) do
     cond do
+      player_id != nil && Enum.member?([game.red, game.black], player_id) ->
+        {:reply, {:ok, self()}, game}
+
       game.red != nil and game.black != nil ->
         {:reply, {:error, "Already two players playing"}, game}
-
-      Enum.member?([game.red, game.black], player_id) ->
-        {:reply, {:ok, self()}, game}
 
       true ->
         Process.flag(:trap_exit, true)
@@ -59,6 +59,7 @@ defmodule ConnectFour.Games.Server do
 
   def handle_call(:game, _from, game), do: {:reply, game, game}
   def handle_call({:game, player_id}, _from, game) do
+    Logger.info "Game status: #{inspect game}"
     color = Game.which_player(game, player_id)
     {:reply, %{game: game, color: color}, game}
   end
@@ -74,10 +75,11 @@ defmodule ConnectFour.Games.Server do
   end
 
   def handle_info({:DOWN, _ref, :process, _pid, _info} = message, game) do
-    Logger.info "Handling message in Game #{game.id}"
+    Logger.info "Handling disconnected ref in Game #{game.id}"
     Logger.info "#{inspect message}"
 
-    {:stop, :normal, game}
+    # {:stop, :normal, game}
+    {:noreply, game}
   end
 
   defp via_tuple(id), do: {:via, Registry, {:game_server_registry, id}}

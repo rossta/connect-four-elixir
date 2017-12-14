@@ -13,8 +13,9 @@ defmodule ConnectFourWeb.GameChannel do
       with {:ok, game_server} <- Games.Cache.server(game_id),
            {:ok, _} <- Games.Server.join(game_server, player_id, socket.channel_pid) do
         Process.monitor(game_server)
+        reply = Games.Server.game(game_server, player_id)
 
-        {:ok, assign(socket, :game_id, game_id)}
+        {:ok, reply, assign(socket, :game_id, game_id)}
       else
         {:error, reason} ->
 
@@ -35,22 +36,6 @@ defmodule ConnectFourWeb.GameChannel do
     {:reply, :ok, socket}
   end
 
-  def handle_in("game:status", _message, socket) do
-    player_id = socket.assigns.player_id
-    game_id = socket.assigns.game_id
-
-    Logger.debug "Broadcasting player joined #{game_id}"
-
-    case Games.Cache.server(game_id) do
-      {:ok, game_server} ->
-        reply = Games.Server.game(game_server, player_id)
-        {:reply, {:ok, reply}, socket}
-
-      {:error, reason} ->
-        {:stop, :shutdown, {:error, %{reason: reason}}, socket}
-    end
-  end
-
   def handle_in("game:move", %{"col" => col}, socket) do
     player_id = socket.assigns.player_id
     game_id = socket.assigns.game_id
@@ -58,12 +43,16 @@ defmodule ConnectFourWeb.GameChannel do
     case Games.Cache.server(game_id) do
       {:ok, game_server} ->
         case Games.Server.move(game_server, player_id, col) do
+          {:foul, reason} ->
+            {:reply, {:ok, %{foul: reason}}, socket}
+
           {:ok, game} ->
-            broadcast!(socket, "game:status", game)
-            {:reply, :ok, socket}
+            broadcast!(socket, "game:updated", game)
+            {:reply, {:ok, game}, socket}
 
           other ->
-            {:reply, {:error, other}, socket}
+            raise "Error in game:move #{inspect other}"
+            {:reply, {:ok, other}, socket}
         end
 
       {:error, reason} ->
