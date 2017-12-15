@@ -13,7 +13,7 @@ defmodule ConnectFourWeb.GameChannel do
       with {:ok, game_server} <- Games.Cache.server(game_id),
            {:ok, _} <- Games.Server.join(game_server, player_id, socket.channel_pid) do
         Process.monitor(game_server)
-        reply = Games.Server.game(game_server, player_id)
+        reply = Games.Server.game(game_server)
 
         {:ok, reply, assign(socket, :game_id, game_id)}
       else
@@ -51,7 +51,7 @@ defmodule ConnectFourWeb.GameChannel do
             {:reply, {:ok, game}, socket}
 
           other ->
-            raise "Error in game:move #{inspect other}"
+            Logger.error "Unrecognized response game:move #{inspect other}"
             {:reply, {:ok, other}, socket}
         end
 

@@ -2,13 +2,15 @@ defmodule ConnectFour.Games.Game do
   @derive [Poison.Encoder]
   alias ConnectFour.Games.{Game, Board}
 
+  @type state :: :not_started | :in_play | :finished
+
   defstruct [
     id: nil,
     red: nil,
     black: nil,
     last: nil,
     turns: [],
-    over: false,
+    status: :not_started,
     winner: nil,
     board: Board.new
   ]

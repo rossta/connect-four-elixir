@@ -30,9 +30,6 @@ defmodule ConnectFour.Games.Server do
   end
 
   def game(game_server), do: GenServer.call(game_server, :game)
-  def game(game_server, player_id) do
-    GenServer.call(game_server, {:game, player_id})
-  end
 
   def move(game_server, player_id, column) do
     GenServer.call(game_server, {:move, player_id, column})
@@ -58,11 +55,6 @@ defmodule ConnectFour.Games.Server do
   end
 
   def handle_call(:game, _from, game), do: {:reply, game, game}
-  def handle_call({:game, player_id}, _from, game) do
-    Logger.info "Game status: #{inspect game}"
-    color = Game.which_player(game, player_id)
-    {:reply, %{game: game, color: color}, game}
-  end
 
   def handle_call({:move, player_id, column}, _from, game) do
     case Game.move(game, player_id, column) do
