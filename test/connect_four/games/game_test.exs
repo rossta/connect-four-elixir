@@ -73,4 +73,33 @@ defmodule ConnectFour.Games.GameTest do
 
     assert Game.winner(%{game | board: board}) == :black
   end
+
+  test "winner four in row", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :black})
+            |> Board.drop_checker({1, :black})
+            |> Board.drop_checker({2, :black})
+            |> Board.drop_checker({3, :black})
+
+    assert Game.winner(%{game | board: board}) == :black
+  end
+
+  test "winner four in row mid-row played last", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :red})
+            |> Board.drop_checker({1, :red})
+            |> Board.drop_checker({3, :red})
+            |> Board.drop_checker({2, :red})
+
+    assert Game.winner(%{game | board: board}) == :red
+  end
+
+  test "winner less than four in a row right edge", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({4, :red})
+            |> Board.drop_checker({6, :red})
+            |> Board.drop_checker({5, :red})
+
+    assert Game.winner(%{game | board: board}) == nil
+  end
 end

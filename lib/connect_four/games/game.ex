@@ -40,21 +40,40 @@ defmodule ConnectFour.Games.Game do
   def winner(%Game{board: board}), do: winner(board)
   def winner(%Board{last: nil}), do: nil
   def winner(%Board{cells: cells, last: last} = board) do
-    column_winner(cells, last)
+    column_winner(cells, last) || row_winner(cells, last)
   end
 
   defp column_winner(_cells, {row, _col, _color}) when row + 1 < 4, do: nil
   defp column_winner(_cells, {_row, _col, :empty}), do: nil
-  defp column_winner(cells, {row, col, color} = checker) do
-    Logger.info "column_winner(cells, {#{row}, #{col}, #{color}})"
-    column_winner(cells, checker, Board.checker(cells, {row-1, col}), 2)
+  defp column_winner(cells, {_row, _col, color} = checker) do
+    column_winner(cells, checker, color, 1)
   end
-  defp column_winner(cells, {_, _, color}, {_, _, color}, 4), do: color
-  defp column_winner(cells, {_, _, color} , {row, col, color} = checker, count) do
-    Logger.info "column_winner(cells, {_, _, #{color}}, {#{row}, #{col}, #{color}}, #{count})"
-    column_winner(cells, checker, Board.checker(cells, {row-1, col}), count+1)
+  defp column_winner(cells, {_, _, color}, color, 4), do: color
+  defp column_winner(cells, {row, col, color} , color, count) do
+    column_winner(cells, Board.checker(cells, {row-1, col}), color, count+1)
   end
-  defp column_winner(cells, {_, _, color1}, {_, _, color2}, count), do: nil
+  defp column_winner(_cells, _checker, _color, _count), do: nil
+
+  defp row_winner(cells, {row, _col, :empty}), do: nil
+  defp row_winner(cells, {_row, _col, color} = checker) do
+    row_winner(cells, leftmost_color_checker(cells, checker), color, 1)
+  end
+  defp row_winner(cells, {_, _, color}, color, 4), do: color
+  defp row_winner(cells, {row, col, color}, color, count) do
+    row_winner(cells, Board.checker(cells, {row, col+1}), color, count+1)
+  end
+  defp row_winner(_cells, _checker, _color, _count), do: nil
+
+  defp leftmost_color_checker(cells, {_row, col, _color} = checker) when col == 0, do: checker
+  defp leftmost_color_checker(cells, {row, col, color}) do
+    col_left = col-1
+    case Board.checker(cells, {row, col_left}) do
+      {row, col_left, color} ->
+        leftmost_color_checker(cells, {row, col_left, color})
+      _ ->
+        {row, col, color}
+    end
+  end
 end
 
 defimpl Poison.Encoder, for: ConnectFour.Games.Game do
