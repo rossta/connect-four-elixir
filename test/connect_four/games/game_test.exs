@@ -1,7 +1,7 @@
 defmodule ConnectFour.Games.GameTest do
   use ExUnit.Case, async: true
 
-  alias ConnectFour.Games.Game
+  alias ConnectFour.Games.{Game, Board}
 
   setup do
     %{game: %Game{}}
@@ -54,9 +54,23 @@ defmodule ConnectFour.Games.GameTest do
       "board" => %{"cells" => %{}, "cols" => 7, "rows" => 6},
       "id" => nil,
       "last" => nil,
-      "over" => false,
       "turns" => [],
-      "winner" => nil
+      "winner" => nil,
+      "status" => "not_started"
     } == json
+  end
+
+  test "winner no moves", %{game: game} do
+    assert Game.winner(game) == nil
+  end
+
+  test "winner four in column", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :black})
+            |> Board.drop_checker({0, :black})
+            |> Board.drop_checker({0, :black})
+            |> Board.drop_checker({0, :black})
+
+    assert Game.winner(%{game | board: board}) == :black
   end
 end

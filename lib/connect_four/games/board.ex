@@ -9,7 +9,8 @@ defmodule ConnectFour.Games.Board do
   defstruct [
     rows: nil,
     cols: nil,
-    cells: nil
+    cells: nil,
+    last: nil
   ]
 
   def new() do
@@ -22,15 +23,25 @@ defmodule ConnectFour.Games.Board do
         {:error, :full_column}
 
       row ->
-        %{board | cells: Map.put(board.cells, cell_key(row, col), {row, col, color})}
+        checker = {row, col, color}
+        cells = Map.put(board.cells, cell_key(row, col), checker)
+        %{board | cells: cells, last: checker}
     end
   end
 
-  def checker(board, {row, col}) do
-    case Map.fetch(board.cells, cell_key(row, col)) do
+  def checker(%Board{} = board, {row, col}) do
+    checker(board.cells, {row, col})
+  end
+  def checker(%{} = cells, {row, col}) do
+    case Map.fetch(cells, cell_key(row, col)) do
       {:ok, checker} -> checker
       :error -> {row, col, :empty}
     end
+  end
+
+  def color(board, {row, col}) do
+    {_, _, checker_color} = checker(board, {row, col})
+    checker_color
   end
 
   defp open_row(%{rows: rows} = board, col) do
