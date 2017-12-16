@@ -29,10 +29,9 @@ defmodule ConnectFour.Games.Board do
     end
   end
 
+  def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: nil
+  def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: nil
   def checker(%Board{cells: cells}, {row, col}) do
-    checker(cells, {row, col})
-  end
-  def checker(%{} = cells, {row, col}) do
     case Map.fetch(cells, cell_key(row, col)) do
       {:ok, checker} -> checker
       :error -> {row, col, :empty}
