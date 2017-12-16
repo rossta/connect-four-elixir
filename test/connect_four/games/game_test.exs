@@ -102,4 +102,38 @@ defmodule ConnectFour.Games.GameTest do
 
     assert Game.winner(%{game | board: board}) == nil
   end
+
+  test "winner rising diagonal", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :red})   # 1
+            |> Board.drop_checker({1, :black})
+            |> Board.drop_checker({1, :red})   # 2
+            |> Board.drop_checker({2, :black})
+            |> Board.drop_checker({2, :red})
+            |> Board.drop_checker({3, :black})
+            |> Board.drop_checker({2, :red})   # 3
+            |> Board.drop_checker({3, :black})
+            |> Board.drop_checker({3, :red})
+            |> Board.drop_checker({4, :black})
+            |> Board.drop_checker({3, :red})   # 4
+
+    assert Game.winner(%{game | board: board}) == :red
+  end
+
+  test "winner falling diagonal", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({3, :black})   # 1
+            |> Board.drop_checker({2, :red})
+            |> Board.drop_checker({2, :black})   # 2
+            |> Board.drop_checker({1, :red})
+            |> Board.drop_checker({1, :black})
+            |> Board.drop_checker({0, :red})
+            |> Board.drop_checker({1, :black})   # 3
+            |> Board.drop_checker({0, :red})
+            |> Board.drop_checker({0, :black})
+            |> Board.drop_checker({4, :red})
+            |> Board.drop_checker({0, :black})   # 4
+
+    assert Game.winner(%{game | board: board}) == :black
+  end
 end

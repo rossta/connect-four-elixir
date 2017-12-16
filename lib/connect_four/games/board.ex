@@ -29,8 +29,8 @@ defmodule ConnectFour.Games.Board do
     end
   end
 
-  def checker(%Board{} = board, {row, col}) do
-    checker(board.cells, {row, col})
+  def checker(%Board{cells: cells}, {row, col}) do
+    checker(cells, {row, col})
   end
   def checker(%{} = cells, {row, col}) do
     case Map.fetch(cells, cell_key(row, col)) do
