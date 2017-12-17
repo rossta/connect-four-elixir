@@ -3,7 +3,7 @@ defmodule ConnectFour.Games.Game do
   alias ConnectFour.Games.{Game, Board}
   require Logger
 
-  @type state :: :not_started | :in_play | :finished
+  @type state :: :not_started | :in_play | :over
 
   defstruct [
     id: nil,
@@ -48,11 +48,11 @@ defmodule ConnectFour.Games.Game do
   end
 
   defp determine_winner(game, nil), do: game
-  defp determine_winner(game, winner), do: (%{game | winner: winner } |> finish_game)
-  defp finish_game(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
-    %{game | status: :finished }
+  defp determine_winner(game, winner), do: (%{game | winner: winner } |> end_game)
+  defp end_game(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
+    %{game | status: :over }
   end
-  defp finish_game(game), do: game
+  defp end_game(game), do: game
 
   def winner(%Game{board: board}), do: winner(board)
   def winner(%Board{last: nil}), do: nil

@@ -163,7 +163,7 @@ defmodule ConnectFour.Games.GameTest do
     game = game |> Game.add_winner
 
     assert game.winner == :red
-    assert game.status == :finished
+    assert game.status == :over
   end
 
   test "add_winner no effect", %{game: game} do
@@ -188,7 +188,7 @@ defmodule ConnectFour.Games.GameTest do
 
     assert game.winner == nil
 
-    game = %{game | status: :finished} |> Game.add_winner
+    game = %{game | status: :over} |> Game.add_winner
 
     assert game.winner == nil
   end
