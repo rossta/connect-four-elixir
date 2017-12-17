@@ -17,17 +17,18 @@ defmodule ConnectFour.Games.Board do
     %Board{rows: @rows, cols: @cols, cells: Map.new}
   end
 
-  def drop_checker(board, {col, color}) do
-    case open_row(board, col) do
-      :none ->
-        {:error, :full_column}
-
-      row ->
-        checker = {row, col, color}
-        cells = Map.put(board.cells, cell_key(row, col), checker)
-        %{board | cells: cells, last: checker}
-    end
+  def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col,
+    do: {:error, :out_of_bounds}
+  def drop_checker(%Board{} = board, {col, color}) do
+    row = open_row(board, col)
+    board |> drop_checker_in_row({row, col, color})
   end
+  defp drop_checker_in_row(_board, {:none, _col, _color}), do: {:error, :full_column}
+  defp drop_checker_in_row(%{cells: cells} = board, {row, col, color} = checker) do
+    cells = Map.put(cells, cell_key(row, col), checker)
+    %{board | cells: cells, last: checker}
+  end
+
 
   def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: nil
   def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: nil

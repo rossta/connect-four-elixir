@@ -19,15 +19,15 @@ defmodule ConnectFour.Games.Game do
   def move(%{board: board, turns: turns} = game, player_id, {_col, _color} = turn) do
     board = board |> Board.drop_checker(turn)
     game = %{game | board: board, last: player_id, turns: [turn | turns]}
-    winner = nil
+    game = game |> add_winner
 
-    {:ok, %{game | winner: winner}}
+    {:ok, game}
   end
 
   def move(%{last: player_id}, player_id, _column), do: {:foul, "Not player's turn"}
   def move(%{red: player_id} = game, player_id, column), do: move(game, player_id, {column, :red})
   def move(%{black: player_id} = game, player_id, column), do: move(game, player_id, {column, :black})
-  def move(%{black: black, red: red}, player_id, _column), do: {:foul, "Player not playing"}
+  def move(%{black: _black, red: _red}, _player_id, _column), do: {:foul, "Player not playing"}
 
   def add_player(%Game{red: nil} = game, player_id), do: (%{game | red: player_id} |> start_game)
   def add_player(%Game{black: nil} = game, player_id), do: (%{game | black: player_id} |> start_game)
@@ -43,15 +43,16 @@ defmodule ConnectFour.Games.Game do
   def which_player(%Game{}, _player_id), do: nil
 
   def add_winner(%{status: status} = game) when status != :in_play, do: game
-  def add_winner(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
-    %{game | status: :finished }
-  end
   def add_winner(game) do
     game |> determine_winner(game |> winner)
   end
 
   defp determine_winner(game, nil), do: game
-  defp determine_winner(game, winner), do: (%{game | winner: winner } |> add_winner)
+  defp determine_winner(game, winner), do: (%{game | winner: winner } |> finish_game)
+  defp finish_game(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
+    %{game | status: :finished }
+  end
+  defp finish_game(game), do: game
 
   def winner(%Game{board: board}), do: winner(board)
   def winner(%Board{last: nil}), do: nil
@@ -64,28 +65,28 @@ defmodule ConnectFour.Games.Game do
   defp column_winner(board, {_row, _col, color} = checker) do
     column_winner(board, checker, color, 1)
   end
-  defp column_winner(board, {_, _, color}, color, 4), do: color
+  defp column_winner(_board, {_, _, color}, color, 4), do: color
   defp column_winner(board, {row, col, color} , color, count) do
     column_winner(board, Board.checker(board, {row-1, col}), color, count+1)
   end
   defp column_winner(_board, _checker, _color, _count), do: nil
 
-  defp row_winner(board, {_row, _col, :empty}), do: nil
+  defp row_winner(_board, {_row, _col, :empty}), do: nil
   defp row_winner(board, {_row, _col, color} = checker) do
     row_winner(board, winner_start_checker(board, checker, 0), color, 1)
   end
-  defp row_winner(board, {_, _, color}, color, 4), do: color
+  defp row_winner(_board, {_, _, color}, color, 4), do: color
   defp row_winner(board, {row, col, color}, color, count) do
     row_winner(board, Board.checker(board, {row, col+1}), color, count+1)
   end
   defp row_winner(_board, _checker, _color, _count), do: nil
 
-  defp diagonal_winner(board, {_row, _col, :empty}), do: nil
+  defp diagonal_winner(_board, {_row, _col, :empty}), do: nil
   defp diagonal_winner(board, {_row, _col, color} = checker) do
     diagonal_winner(board, winner_start_checker(board, checker, -1), +1, color, 1)
       || diagonal_winner(board, winner_start_checker(board, checker, +1), -1, color, 1)
   end
-  defp diagonal_winner(board, {_, _, color}, row_diff, color, 4), do: color
+  defp diagonal_winner(_board, {_, _, color}, _row_diff, color, 4), do: color
   defp diagonal_winner(board, {row, col, color}, row_diff, color, count) do
     diagonal_winner(board, Board.checker(board, {row+row_diff, col+1}), row_diff, color, count+1)
   end

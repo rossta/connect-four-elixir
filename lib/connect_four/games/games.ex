@@ -52,7 +52,7 @@ defmodule ConnectFour.Games do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_player(attrs \\ %{}) do
+  def create_player(_attrs \\ %{}) do
     id = @id_length
          |> :crypto.strong_rand_bytes
          |> Base.url_encode64()
@@ -149,7 +149,7 @@ defmodule ConnectFour.Games do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_game(attrs \\ %{}) do
+  def create_game(_attrs \\ %{}) do
     id = @id_length
          |> :crypto.strong_rand_bytes
          |> Base.url_encode64()
