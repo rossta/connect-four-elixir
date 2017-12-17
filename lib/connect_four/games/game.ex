@@ -29,9 +29,14 @@ defmodule ConnectFour.Games.Game do
   def move(%{black: player_id} = game, player_id, column), do: move(game, player_id, {column, :black})
   def move(%{black: black, red: red}, player_id, _column), do: {:foul, "Player not playing"}
 
-  def add_player(%Game{red: nil} = game, player_id), do: %{game | red: player_id}
-  def add_player(%Game{black: nil} = game, player_id), do: %{game | black: player_id}
+  def add_player(%Game{red: nil} = game, player_id), do: (%{game | red: player_id} |> start_game)
+  def add_player(%Game{black: nil} = game, player_id), do: (%{game | black: player_id} |> start_game)
   def add_player(%Game{} = game, _player_id), do: game
+
+  def start_game(%Game{red: nil} = game), do: game
+  def start_game(%Game{black: nil} = game), do: game
+  def start_game(%Game{status: :not_started} = game), do: %{game | status: :in_play}
+  def start_game(%Game{} = game), do: game
 
   def which_player(%Game{red: player_id}, player_id), do: :red
   def which_player(%Game{black: player_id}, player_id), do: :black

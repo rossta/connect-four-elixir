@@ -4,25 +4,33 @@ defmodule ConnectFour.Games.GameTest do
   alias ConnectFour.Games.{Game, Board}
 
   setup do
-    %{game: %Game{status: :in_play}}
+    %{game: %Game{status: :not_started}}
   end
 
   test "add_player to empty game", %{game: game} do
-    %{red: red, black: black} = Game.add_player(game, "123")
+    assert game.status == :not_started
+
+    %{red: red, black: black, status: status} = Game.add_player(game, "123")
     assert red == "123"
     assert black == nil
+    assert status == :not_started
   end
 
   test "add_player to game with another player", %{game: game} do
     game = %{game | red: "123"}
-    %{red: red, black: black} = Game.add_player(game, "abc")
+    assert game.status == :not_started
+
+    %{red: red, black: black, status: status} = Game.add_player(game, "abc")
     assert red == "123"
     assert black == "abc"
+    assert status == :in_play
   end
 
   test "add_player to full game", %{game: game} do
     game = %{game | red: "123", black: "abc"}
+
     %{red: red, black: black} = Game.add_player(game, "xyz")
+
     assert red == "123"
     assert black == "abc"
   end
@@ -45,8 +53,11 @@ defmodule ConnectFour.Games.GameTest do
   end
 
   test "poison encoding", %{game: game} do
-    game = game |> Game.add_player("abc") |> Game.add_player("xyz")
-    json = game |> Poison.encode! |> Poison.Parser.parse!
+    json = game
+           |> Game.add_player("abc")
+           |> Game.add_player("xyz")
+           |> Poison.encode!
+           |> Poison.Parser.parse!
 
     assert %{
       "black" => "xyz",
@@ -138,6 +149,7 @@ defmodule ConnectFour.Games.GameTest do
   end
 
   test "add_winner adds winner, finishes game", %{game: game} do
+    game = %{game | status: :in_play}
     board = game.board
             |> Board.drop_checker({0, :red})
             |> Board.drop_checker({1, :red})
@@ -155,8 +167,8 @@ defmodule ConnectFour.Games.GameTest do
   end
 
   test "add_winner no effect", %{game: game} do
+    game = %{game | status: :in_play}
     assert game.winner == nil
-    assert game.status == :in_play
 
     game = game |> Game.add_winner
 
@@ -165,6 +177,7 @@ defmodule ConnectFour.Games.GameTest do
   end
 
   test "add_winner no in_play", %{game: game} do
+    game = %{game | status: :in_play}
     board = game.board
             |> Board.drop_checker({0, :red})
             |> Board.drop_checker({1, :red})
