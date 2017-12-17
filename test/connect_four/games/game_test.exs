@@ -4,7 +4,7 @@ defmodule ConnectFour.Games.GameTest do
   alias ConnectFour.Games.{Game, Board}
 
   setup do
-    %{game: %Game{}}
+    %{game: %Game{status: :in_play}}
   end
 
   test "add_player to empty game", %{game: game} do
@@ -56,7 +56,7 @@ defmodule ConnectFour.Games.GameTest do
       "last" => nil,
       "turns" => [],
       "winner" => nil,
-      "status" => "not_started"
+      "status" => "in_play"
     } == json
   end
 
@@ -135,5 +135,48 @@ defmodule ConnectFour.Games.GameTest do
             |> Board.drop_checker({0, :black})   # 4
 
     assert Game.winner(%{game | board: board}) == :black
+  end
+
+  test "add_winner adds winner, finishes game", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :red})
+            |> Board.drop_checker({1, :red})
+            |> Board.drop_checker({3, :red})
+            |> Board.drop_checker({2, :red})
+    game = %{game | board: board}
+
+    assert game.winner == nil
+    assert game.status == :in_play
+
+    game = game |> Game.add_winner
+
+    assert game.winner == :red
+    assert game.status == :finished
+  end
+
+  test "add_winner no effect", %{game: game} do
+    assert game.winner == nil
+    assert game.status == :in_play
+
+    game = game |> Game.add_winner
+
+    assert game.winner == nil
+    assert game.status == :in_play
+  end
+
+  test "add_winner no in_play", %{game: game} do
+    board = game.board
+            |> Board.drop_checker({0, :red})
+            |> Board.drop_checker({1, :red})
+            |> Board.drop_checker({3, :red})
+            |> Board.drop_checker({2, :red})
+
+    game = %{game | board: board, status: :not_started} |> Game.add_winner
+
+    assert game.winner == nil
+
+    game = %{game | status: :finished} |> Game.add_winner
+
+    assert game.winner == nil
   end
 end

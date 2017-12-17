@@ -37,6 +37,17 @@ defmodule ConnectFour.Games.Game do
   def which_player(%Game{black: player_id}, player_id), do: :black
   def which_player(%Game{}, _player_id), do: nil
 
+  def add_winner(%{status: status} = game) when status != :in_play, do: game
+  def add_winner(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
+    %{game | status: :finished }
+  end
+  def add_winner(game) do
+    game |> determine_winner(game |> winner)
+  end
+
+  defp determine_winner(game, nil), do: game
+  defp determine_winner(game, winner), do: (%{game | winner: winner } |> add_winner)
+
   def winner(%Game{board: board}), do: winner(board)
   def winner(%Board{last: nil}), do: nil
   def winner(%Board{last: last} = board) do
