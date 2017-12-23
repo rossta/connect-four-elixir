@@ -44,17 +44,17 @@ defmodule ConnectFour.Games.Server do
   def handle_call({:join, player_id, channel_pid}, _from, game) do
     cond do
       player_id != nil && Enum.member?([game.red, game.black], player_id) ->
-        {:reply, {:ok, self()}, game}
+        {:reply, {:ok, game}, game}
 
       game.red != nil and game.black != nil ->
-        {:reply, {:error, "Already two players playing"}, game}
+        {:reply, {:fail, game}, game}
 
       true ->
         Process.flag(:trap_exit, true)
         Process.monitor(channel_pid)
 
         game = Game.add_player(game, player_id)
-        {:reply, {:ok, self()}, game}
+        {:reply, {:ok, game}, game}
     end
   end
 

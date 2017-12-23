@@ -21,9 +21,10 @@ defmodule ConnectFour.Games.ServerTest do
   test "join adds too many players", %{server: server} do
     {:ok, _} = Server.join(server, "player_1", self())
     {:ok, _} = Server.join(server, "player_2", self())
-    {:error, reason} = Server.join(server, "player_3", self())
+    {:fail, game} = Server.join(server, "player_3", self())
 
-    assert reason == "Already two players playing"
+    assert game.red != "player_3"
+    assert game.black != "player_3"
   end
 
   test "join adds same player twice", %{server: server} do
