@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :connect_four, ConnectFourWeb.Endpoint,
-  http: [port: 4000],
+  http: [port: System.get_env("PORT") || 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -39,8 +39,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :connect_four, ConnectFour.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("POSTGRESQL_USERNAME") || "postgres",
+  password: System.get_env("POSTGRESQL_PASSWORD") || "postgres",
+  hostname: System.get_env("POSTGRESQL_HOST") || "localhost",
   database: "connect_four_development",
-  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

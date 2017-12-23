@@ -1,0 +1,48 @@
+version: "2"
+
+services:
+  postgres:
+    image: postgres
+    expose:
+      - "5432"
+    ports:
+      - 54320:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  web: &api_base
+    build: .
+    command: mix phx.server
+    depends_on:
+      - postgres
+    environment: &api_environment
+      MIX_ENV: dev
+      PORT: "4000"
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: postgres
+    links:
+      - postgres
+    expose:
+      - "4000"
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/app
+
+  test:
+    image: connectfourphoenix_web
+    command: mix test
+    environment:
+      <<: *api_environment
+      MIX_ENV: test
+      PORT: 4001
+    volumes_from:
+      - web
+    links:
+      - postgres
+    ports:
+      - 4001:4001
+
+volumes:
+  postgres-data:
