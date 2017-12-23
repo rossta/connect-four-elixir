@@ -3,12 +3,14 @@ defmodule ConnectFour.Games.Game do
   alias ConnectFour.Games.{Game, Board}
   require Logger
 
+  @type color :: :red | :black
   @type state :: :not_started | :in_play | :over
 
   defstruct [
     id: nil,
     red: nil,
     black: nil,
+    next: nil,
     last: nil,
     turns: [],
     status: :not_started,
@@ -16,13 +18,16 @@ defmodule ConnectFour.Games.Game do
     board: Board.new
   ]
 
-  def move(%{board: board, turns: turns} = game, player_id, {_col, _color} = turn) do
+  def move(%{board: board, next: color} = game, player_id, {_col, color} = turn) do
     board = board |> Board.drop_checker(turn)
-    game = %{game | board: board, last: player_id, turns: [turn | turns]}
-    game = game |> add_winner
+    game = %{game | board: board, last: player_id}
+           |> switch_color
+           |> add_turn(turn)
+           |> add_winner
 
     {:ok, game}
   end
+  def move(%{next: color_1}, _player_id, {_col, color_2}), do: {:foul, "Wrong color moved"}
 
   def move(%{last: player_id}, player_id, _column), do: {:foul, "Not player's turn"}
   def move(%{red: player_id} = game, player_id, column), do: move(game, player_id, {column, :red})
@@ -35,7 +40,12 @@ defmodule ConnectFour.Games.Game do
 
   def start_game(%Game{red: nil} = game), do: game
   def start_game(%Game{black: nil} = game), do: game
-  def start_game(%Game{status: :not_started} = game), do: %{game | status: :in_play}
+  def start_game(%Game{status: :not_started} = game) do
+    %{game | status: :in_play} |> start_game
+  end
+  def start_game(%Game{next: nil} = game) do
+    %{game | next: :red}
+  end
   def start_game(%Game{} = game), do: game
 
   def which_player(%Game{red: player_id}, player_id), do: :red
@@ -50,7 +60,7 @@ defmodule ConnectFour.Games.Game do
   defp determine_winner(game, nil), do: game
   defp determine_winner(game, winner), do: (%{game | winner: winner } |> end_game)
   defp end_game(%{winner: winner, status: :in_play} = game) when not is_nil(winner) do
-    %{game | status: :over }
+    %{game | status: :over}
   end
   defp end_game(game), do: game
 
