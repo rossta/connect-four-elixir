@@ -35,6 +35,10 @@ defmodule ConnectFour.Games.Server do
     GenServer.call(game_server, {:move, player_id, column})
   end
 
+  def stop(game_server) do
+    GenServer.cast(game_server, :stop)
+  end
+
   # Server
 
   def handle_call({:join, player_id, channel_pid}, _from, game) do

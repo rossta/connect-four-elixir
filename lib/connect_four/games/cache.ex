@@ -21,4 +21,15 @@ defmodule ConnectFour.Games.Cache do
         {:ok, pid}
     end
   end
+
+  def stop_server(game_id) do
+    game_id |> server |> handle_stop_server
+  end
+
+  defp handle_stop_server({:error, _reason}), do: :ok
+  defp handle_stop_server(:ok), do: :ok
+  defp handle_stop_server({:ok, game_server}) do
+    Games.ServerSupervisor.terminate_child(game_server)
+    |> handle_stop_server
+  end
 end

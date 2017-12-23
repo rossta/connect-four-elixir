@@ -11,6 +11,10 @@ defmodule ConnectFour.Games.ServerSupervisor do
     Supervisor.start_child(:game_server_supervisor, [game_id])
   end
 
+  def terminate_child(game_server_pid) do
+    Supervisor.terminate_child(:game_server_supervisor, game_server_pid)
+  end
+
   def init(_) do
     children = [
       worker(Games.Server, [])
