@@ -103,7 +103,7 @@ defmodule ConnectFour.Games.Board do
     row_left = row+row_diff
     col_left = col-1
     case Board.checker(board, {row_left, col_left}) do
-      {row_left, col_left, color} ->
+      {row_left, col_left, ^color} ->
         winner_start_checker(board, {row_left, col_left, color}, row_diff)
       _ ->
         {row, col, color}
