@@ -109,6 +109,22 @@ defmodule ConnectFour.Games.Board do
         {row, col, color}
     end
   end
+
+  def to_string(%Board{cols: cols, rows: rows} = board) do
+    string = for row <- (rows-1)..0 do
+      for col <- 0..(cols-1) do
+        case Board.color(board, {row, col}) do
+          :red -> "R"
+          :black -> "B"
+          :empty -> "."
+        end
+      end
+      |> Enum.join("")
+    end
+    |> Enum.join("\n")
+
+    "\n" <> string
+  end
 end
 
 defimpl Poison.Encoder, for: ConnectFour.Games.Board do
@@ -125,5 +141,13 @@ defimpl Poison.Encoder, for: ConnectFour.Games.Board do
 
   def encode(board, _options) do
     raise Poison.EncodeError, value: board
+  end
+end
+
+defimpl Inspect, for: ConnectFour.Games.Board do
+  alias ConnectFour.Games.Board
+
+  def inspect(%Board{} = board, opts) do
+    Board.to_string(board)
   end
 end
