@@ -6,6 +6,10 @@ defmodule ConnectFourWeb.GameController do
 
   action_fallback ConnectFourWeb.FallbackController
 
+  def index(conn, %{}) do
+    text conn, "ok"
+  end
+
   def create(conn, %{}) do
     with {:ok, %Game{} = game} <- Games.create_game() do
       # ConnectFour.Endpoint.broadcast("lobby", "update_games", %{games: Games.Supervisor.current_games})

@@ -8,6 +8,8 @@ defmodule ConnectFourWeb.Router do
   scope "/", ConnectFourWeb do
     pipe_through :api
 
+    get "/", GameController, :index
+
     resources "/players", PlayerController
     resources "/games", GameController
   end
