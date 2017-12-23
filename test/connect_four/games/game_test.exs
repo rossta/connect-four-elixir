@@ -59,16 +59,15 @@ defmodule ConnectFour.Games.GameTest do
            |> Poison.encode!
            |> Poison.Parser.parse!
 
-    assert %{
-      "black" => "xyz",
-      "red" => "abc",
-      "board" => %{"cells" => %{}, "cols" => 7, "rows" => 6},
-      "id" => nil,
-      "last" => nil,
-      "turns" => [],
-      "winner" => nil,
-      "status" => "in_play"
-    } == json
+    assert json["black"] == "xyz"
+    assert json["red"] == "abc"
+    assert json["board"] == %{"cells" => %{}, "cols" => 7, "rows" => 6}
+    assert json["id"] == nil
+    assert json["last"] == nil
+    assert json["winner"] == nil
+    assert json["turns"] == []
+    assert json["status"] == "in_play"
+    assert ["red", "black"] |> Enum.member?(json["next"])
   end
 
   test "winner no moves", %{game: game} do
@@ -81,69 +80,6 @@ defmodule ConnectFour.Games.GameTest do
             |> Board.drop_checker({0, :black})
             |> Board.drop_checker({0, :black})
             |> Board.drop_checker({0, :black})
-
-    assert Game.winner(%{game | board: board}) == :black
-  end
-
-  test "winner four in row", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({1, :black})
-            |> Board.drop_checker({2, :black})
-            |> Board.drop_checker({3, :black})
-
-    assert Game.winner(%{game | board: board}) == :black
-  end
-
-  test "winner four in row mid-row played last", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({0, :red})
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({3, :red})
-            |> Board.drop_checker({2, :red})
-
-    assert Game.winner(%{game | board: board}) == :red
-  end
-
-  test "winner less than four in a row right edge", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({4, :red})
-            |> Board.drop_checker({6, :red})
-            |> Board.drop_checker({5, :red})
-
-    assert Game.winner(%{game | board: board}) == nil
-  end
-
-  test "winner rising diagonal", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({0, :red})   # 1
-            |> Board.drop_checker({1, :black})
-            |> Board.drop_checker({1, :red})   # 2
-            |> Board.drop_checker({2, :black})
-            |> Board.drop_checker({2, :red})
-            |> Board.drop_checker({3, :black})
-            |> Board.drop_checker({2, :red})   # 3
-            |> Board.drop_checker({3, :black})
-            |> Board.drop_checker({3, :red})
-            |> Board.drop_checker({4, :black})
-            |> Board.drop_checker({3, :red})   # 4
-
-    assert Game.winner(%{game | board: board}) == :red
-  end
-
-  test "winner falling diagonal", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({3, :black})   # 1
-            |> Board.drop_checker({2, :red})
-            |> Board.drop_checker({2, :black})   # 2
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({1, :black})
-            |> Board.drop_checker({0, :red})
-            |> Board.drop_checker({1, :black})   # 3
-            |> Board.drop_checker({0, :red})
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({4, :red})
-            |> Board.drop_checker({0, :black})   # 4
 
     assert Game.winner(%{game | board: board}) == :black
   end
