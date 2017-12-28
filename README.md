@@ -1,4 +1,4 @@
-# ConnectFour
+# PlayFour
 
 To start your Phoenix server:
 

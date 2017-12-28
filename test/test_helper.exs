@@ -1,4 +1,4 @@
 ExUnit.start()
 
-Ecto.Adapters.SQL.Sandbox.mode(ConnectFour.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(PlayFour.Repo, :manual)
 

@@ -1,4 +1,4 @@
-defmodule ConnectFourWeb.ChannelCase do
+defmodule PlayFourWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -21,15 +21,15 @@ defmodule ConnectFourWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint ConnectFourWeb.Endpoint
+      @endpoint PlayFourWeb.Endpoint
     end
   end
 
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ConnectFour.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(PlayFour.Repo)
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ConnectFour.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(PlayFour.Repo, {:shared, self()})
     end
     :ok
   end

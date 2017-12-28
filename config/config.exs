@@ -6,15 +6,15 @@
 use Mix.Config
 
 # General application configuration
-config :connect_four,
-  ecto_repos: [ConnectFour.Repo]
+config :play_four,
+  ecto_repos: [PlayFour.Repo]
 
 # Configures the endpoint
-config :connect_four, ConnectFourWeb.Endpoint,
+config :play_four, PlayFourWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "VJFvSEVw04hyse+Oq9RMmm6kel6TgYAIGanxOmMfpfkvQyyMyuUSymTIjbEn1PKa",
-  render_errors: [view: ConnectFourWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ConnectFour.PubSub,
+  render_errors: [view: PlayFourWeb.ErrorView, accepts: ~w(json)],
+  pubsub: [name: PlayFour.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger

@@ -1,9 +1,9 @@
-defmodule ConnectFour.Mixfile do
+defmodule PlayFour.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :connect_four,
+      app: :play_four,
       version: "0.0.1",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env),
@@ -19,7 +19,7 @@ defmodule ConnectFour.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {ConnectFour.Application, []},
+      mod: {PlayFour.Application, []},
       extra_applications: [:logger, :runtime_tools, :corsica]
     ]
   end

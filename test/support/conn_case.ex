@@ -1,4 +1,4 @@
-defmodule ConnectFourWeb.ConnCase do
+defmodule PlayFourWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -19,18 +19,18 @@ defmodule ConnectFourWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      import ConnectFourWeb.Router.Helpers
+      import PlayFourWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint ConnectFourWeb.Endpoint
+      @endpoint PlayFourWeb.Endpoint
     end
   end
 
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ConnectFour.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(PlayFour.Repo)
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ConnectFour.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(PlayFour.Repo, {:shared, self()})
     end
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

@@ -6,7 +6,7 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :connect_four, ConnectFourWeb.Endpoint,
+config :play_four, PlayFourWeb.Endpoint,
   http: [port: System.get_env("PORT") || 4000],
   debug_errors: true,
   code_reloader: true,
@@ -37,10 +37,10 @@ config :logger, :console, format: "[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
-config :connect_four, ConnectFour.Repo,
+config :play_four, PlayFour.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("POSTGRESQL_USERNAME") || "postgres",
   password: System.get_env("POSTGRESQL_PASSWORD") || "postgres",
   hostname: System.get_env("POSTGRESQL_HOST") || "localhost",
-  database: "connect_four_development",
+  database: "play_four_development",
   pool: Ecto.Adapters.SQL.Sandbox
