@@ -1,5 +1,5 @@
 defmodule ConnectFour.Game do
-  alias ConnectFour.{Game, Board}
+  alias ConnectFour.{Game, Board, Winner}
   require Logger
 
   @type color :: :red | :black
@@ -63,7 +63,7 @@ defmodule ConnectFour.Game do
   end
   defp end_game(game), do: game
 
-  def winner(%Game{board: board}), do: Board.winner(board)
+  def winner(%Game{board: board}), do: Winner.winner(board)
 
   defp switch_color(%Game{next: color} = game) do
     next = case color do
