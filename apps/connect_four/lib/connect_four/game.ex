@@ -17,21 +17,28 @@ defmodule ConnectFour.Game do
     board: Board.new
   ]
 
-  def move(%{board: board, next: color} = game, player_id, {_col, color} = turn) do
-    board = board |> Board.drop_checker(turn)
-    game = %{game | board: board, last: player_id}
+  def move(%Game{board: board, next: color} = game, player_id, {_col, color} = turn) do
+    board
+    |> Board.drop_checker(turn)
+    |> complete_move(game, player_id, turn)
+  end
+  def move(%Game{status: status}, _player_id, _column) when status != :in_play, do: foul("Game is not in play")
+
+  def move(%Game{next: _color_1}, _player_id, {_col, _color_2}), do: foul("Out of turn")
+  def move(%Game{red: player_id} = game, player_id, column), do: move(game, player_id, {column, :red})
+  def move(%Game{black: player_id} = game, player_id, column), do: move(game, player_id, {column, :black})
+  def move(%Game{black: _black, red: _red}, _player_id, _column), do: foul("Player not playing")
+
+  defp complete_move({:error, reason}, _game, _player_id, _turn), do: foul(reason)
+  defp complete_move(%Board{} = board, %Game{} = game, player_id, turn) do
+    game = %{game | board: board}
            |> switch_color
            |> add_turn(turn)
            |> add_winner
 
     {:ok, game}
   end
-  def move(%{next: _color_1}, _player_id, {_col, _color_2}), do: {:foul, "Wrong color moved"}
-
-  def move(%{last: player_id}, player_id, _column), do: {:foul, "Not player's turn"}
-  def move(%{red: player_id} = game, player_id, column), do: move(game, player_id, {column, :red})
-  def move(%{black: player_id} = game, player_id, column), do: move(game, player_id, {column, :black})
-  def move(%{black: _black, red: _red}, _player_id, _column), do: {:foul, "Player not playing"}
+  defp foul(message), do: {:foul, message}
 
   def add_player(%Game{red: nil} = game, player_id), do: (%{game | red: player_id} |> start_game)
   def add_player(%Game{black: nil} = game, player_id), do: (%{game | black: player_id} |> start_game)

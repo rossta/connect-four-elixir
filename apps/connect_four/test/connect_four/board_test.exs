@@ -45,12 +45,12 @@ defmodule ConnectFour.BoardTest do
             |> Board.drop_checker({1, :red})
             |> Board.drop_checker({1, :black})
 
-    assert {:error, :full_column} == Board.drop_checker(board, {1, :red})
+    assert {:error, "Column full"} == Board.drop_checker(board, {1, :red})
   end
 
   test "drop_checker out-of-bounds", %{board: board} do
-    assert {:error, :out_of_bounds} == Board.drop_checker(board, {-1, :red})
-    assert {:error, :out_of_bounds} == Board.drop_checker(board, {7, :red})
+    assert {:error, "Out of bounds"} == Board.drop_checker(board, {-1, :red})
+    assert {:error, "Out of bounds"} == Board.drop_checker(board, {7, :red})
   end
 
   test "checker for occupied cell", %{board: board} do

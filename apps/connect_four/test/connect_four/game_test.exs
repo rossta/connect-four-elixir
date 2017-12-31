@@ -7,6 +7,49 @@ defmodule ConnectFour.GameTest do
     %{game: %Game{status: :not_started}}
   end
 
+  defp game_in_play(%{game: game}) do
+    %{
+      game:  %{ game |
+        status: :in_play,
+        red: "player_1",
+        black: "player_2",
+        next: :red,
+      }
+    }
+  end
+
+  test "move game not in play", %{game: game} do
+    for status <- [:not_started, :over] do
+      game = %{game | status: status}
+      assert {:foul, "Game is not in play"} = Game.move(game, "player_id", 0)
+    end
+  end
+
+  describe "game in play" do
+    setup :game_in_play
+
+    test "move out of turn", %{game: game} do
+      assert {:foul, "Out of turn"} = Game.move(game, "player_2", 0)
+    end
+
+    test "move by nonplayer", %{game: game} do
+      assert {:foul, "Player not playing"} = Game.move(game, "non_player", 0)
+    end
+
+    test "move invalid column", %{game: game} do
+      assert {:foul, "Out of bounds"} = Game.move(game, "player_1", -1)
+    end
+
+    test "move red successful", %{game: game} do
+      assert {:ok, %Game{}} = Game.move(game, "player_1", 0)
+    end
+
+    test "move black successful", %{game: game} do
+      {:ok, game} = Game.move(game, "player_1", 0)
+      assert {:ok, %Game{}} = Game.move(game, "player_2", 0)
+    end
+  end
+
   test "add_player to empty game", %{game: game} do
     assert game.status == :not_started
 

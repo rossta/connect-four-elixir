@@ -5,7 +5,7 @@ defmodule ConnectFour.Server do
   alias ConnectFour.Game
 
   def start_link(game_id) do
-    Logger.info "Starting game server."
+    Logger.debug "Starting game server."
 
     GenServer.start_link(__MODULE__, game_id, name: via_tuple(game_id))
   end
@@ -33,10 +33,6 @@ defmodule ConnectFour.Server do
 
   def move(game_server, player_id, column) do
     GenServer.call(game_server, {:move, player_id, column})
-  end
-
-  def stop(game_server) do
-    GenServer.cast(game_server, :stop)
   end
 
   # Server

@@ -40,5 +40,5 @@ defmodule PlayFourWeb.PlayerSocket do
   #     PlayFourWeb.Endpoint.broadcast("player_socket:#{player.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
-  def id(_socket), do: nil
+  def id(socket), do: "player_socket:#{socket.assigns.player_id}"
 end

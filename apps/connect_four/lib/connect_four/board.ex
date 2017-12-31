@@ -17,12 +17,12 @@ defmodule ConnectFour.Board do
   end
 
   def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col,
-    do: {:error, :out_of_bounds}
+    do: {:error, "Out of bounds"}
   def drop_checker(%Board{} = board, {col, color}) do
     row = open_row(board, col)
     board |> drop_checker_in_row({row, col, color})
   end
-  defp drop_checker_in_row(_board, {:none, _col, _color}), do: {:error, :full_column}
+  defp drop_checker_in_row(_board, {:none, _col, _color}), do: {:error, "Column full"}
   defp drop_checker_in_row(%{cells: cells} = board, {row, col, _color} = checker) do
     cells = Map.put(cells, cell_key(row, col), checker)
     %{board | cells: cells, last: checker}

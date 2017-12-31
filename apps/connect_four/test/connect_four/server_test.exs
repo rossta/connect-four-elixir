@@ -13,9 +13,7 @@ defmodule ConnectFour.ServerTest do
     {:ok, _} = Server.join(server, "player_1", self())
     {:ok, _} = Server.join(server, "player_2", self())
 
-    %{red: red, black: black} = Server.game(server)
-    assert red == "player_1"
-    assert black == "player_2"
+    %{red: "player_1", black: "player_2"} = Server.game(server)
   end
 
   test "join adds too many players", %{server: server} do
@@ -31,10 +29,7 @@ defmodule ConnectFour.ServerTest do
     {:ok, _} = Server.join(server, "player_1", self())
     {:ok, _} = Server.join(server, "player_1", self())
 
-    %{red: red, black: black} = Server.game(server)
-
-    assert red == "player_1"
-    assert black == nil
+    %{red: "player_1", black: nil} = Server.game(server)
   end
 
   # test "terminates when player goes down", %{server: server} do
@@ -53,8 +48,7 @@ defmodule ConnectFour.ServerTest do
   test "whereis for existing game" do
     pid = Server.whereis("abc")
 
-    %{id: id} = Server.game(pid)
-    assert id == "abc"
+    %{id: "abc"} = Server.game(pid)
     assert Process.alive?(pid)
   end
 
@@ -65,11 +59,10 @@ defmodule ConnectFour.ServerTest do
     row = 0
     col = 3
     {:ok, _} = Server.move(server, "player_1", col)
-    %{board: board, last: last, turns: [turn]} = Server.game(server)
+    %{board: board, turns: [turn]} = Server.game(server)
 
-    assert last == "player_1"
-    assert turn == {col, :red}
-    assert {row, col, :red} == Board.checker(board, {row, col})
+    assert ^turn = {col, :red}
+    assert {^row, ^col, :red} = Board.checker(board, {row, col})
   end
 
   test "move out of turn", %{server: server} do
@@ -77,15 +70,13 @@ defmodule ConnectFour.ServerTest do
     Server.join(server, "player_2", self())
 
     {:ok, _} = Server.move(server, "player_1", 0)
-    {:foul, reason} = Server.move(server, "player_1", 1)
-    assert reason == "Not player's turn"
+    {:foul, "Out of turn"} = Server.move(server, "player_1", 1)
   end
 
   test "move by nonplayer", %{server: server} do
     Server.join(server, "player_1", self())
     Server.join(server, "player_2", self())
 
-    {:foul, reason} = Server.move(server, "nonplayer", 1)
-    assert reason == "Player not playing"
+    {:foul, "Player not playing"} = Server.move(server, "nonplayer", 1)
   end
 end

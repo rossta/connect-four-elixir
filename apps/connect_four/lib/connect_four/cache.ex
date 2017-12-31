@@ -13,12 +13,46 @@ defmodule ConnectFour.Cache do
     end
   end
 
+  def start_game(game_id) do
+    {:ok, pid} = start_server(game_id)
+    {:ok, Server.game(pid)}
+  end
+
   def start_server(game_id) do
     case ServerSupervisor.start_child(game_id) do
       {:ok, pid} ->
         {:ok, pid}
       {:error, {:already_started, pid}} ->
         {:ok, pid}
+    end
+  end
+
+  def join_game(game_id, player_id, pid) do
+    with {:ok, game_server} <- server(game_id) do
+      join = Server.join(game_server, player_id, pid)
+      case join do
+        {:ok, _} -> Process.monitor(game_server)
+        {:fail, _} -> true
+      end
+      join
+    else
+      error -> error
+    end
+  end
+
+  def fetch_game(game_id) do
+    with {:ok, game_server} <- server(game_id) do
+      Server.game(game_server)
+    else
+      error -> error
+    end
+  end
+
+  def move(game_id, player_id, col) do
+    with {:ok, game_server} <- server(game_id) do
+      Server.move(game_server, player_id, col)
+    else
+      error -> error
     end
   end
 
