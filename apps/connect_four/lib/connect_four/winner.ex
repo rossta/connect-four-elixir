@@ -40,7 +40,7 @@ defmodule ConnectFour.Winner do
     %Winner{color: color, delta: delta}
     |> collect_winner(board, first_checker)
   end
-  defp collect_winner(%Winner{moves: moves, color: color}, _board, _checker) when length(moves) == 4, do: {color, moves}
+  defp collect_winner(%Winner{moves: moves, color: color} = winner, _board, _checker) when length(moves) == 4, do: winner
   defp collect_winner(%Winner{color: color} = winner, board, {row, col, color}) do
     next_checker = Board.checker(board, delta_move({row, col}, winner.delta))
 
