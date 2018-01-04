@@ -72,6 +72,11 @@ defmodule ConnectFour.Game do
 
   def winner(%Game{board: board}), do: Winner.winner(board)
 
+  def next_color(color) when is_nil(color), do: throw "Game not started"
+  def next_color(color) when color not in [:red, :black], do: throw "Not a color: #{inspect color}"
+  def next_color(:red), do: :black
+  def next_color(:black), do: :red
+
   defp switch_color(%Game{next: color} = game) do
     next = case color do
       :red -> :black

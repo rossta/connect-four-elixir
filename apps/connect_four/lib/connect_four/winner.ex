@@ -8,7 +8,6 @@ defmodule ConnectFour.Winner do
 
   defstruct [
     moves: [],
-    delta: nil,
     color: :empty,
   ]
 
@@ -20,6 +19,8 @@ defmodule ConnectFour.Winner do
   def winner(%Board{} = board, checker) do
     column_winner(board, checker) || row_winner(board, checker) || diagonal_winner(board, checker)
   end
+
+  def to_tuple(%Winner{color: color, moves: moves}), do: {color, moves}
 
   defp column_winner(_board, {row, _col, _color}) when row + 1 < 4, do: nil
   defp column_winner(board, {_row, _col, _color} = checker) do
@@ -37,17 +38,17 @@ defmodule ConnectFour.Winner do
   defp collect_winner(board, {_row, _col, color} = checker, delta) do
     first_checker = winner_start_checker(board, checker, inverse_delta(delta))
 
-    %Winner{color: color, delta: delta}
-    |> collect_winner(board, first_checker)
+    %Winner{color: color}
+    |> collect_winner(board, first_checker, delta)
   end
-  defp collect_winner(%Winner{moves: moves, color: color} = winner, _board, _checker) when length(moves) == 4, do: winner
-  defp collect_winner(%Winner{color: color} = winner, board, {row, col, color}) do
-    next_checker = Board.checker(board, delta_move({row, col}, winner.delta))
+  defp collect_winner(%Winner{moves: moves, color: color} = winner, _board, _checker, _delta) when length(moves) == 4, do: winner
+  defp collect_winner(%Winner{color: color} = winner, board, {row, col, color}, delta) do
+    next_checker = Board.checker(board, delta_move({row, col}, delta))
 
     %Winner{winner | moves: [{row, col} | winner.moves]}
-    |> collect_winner(board, next_checker)
+    |> collect_winner(board, next_checker, delta)
   end
-  defp collect_winner(_winner, _board, _checker), do: nil
+  defp collect_winner(_winner, _board, _checker, _delta), do: nil
 
   defp winner_start_checker(board, {row, col, color}, delta) do
     {row_left, col_left} = delta_move({row, col}, delta)

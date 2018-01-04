@@ -1,7 +1,7 @@
 defmodule ConnectFour.GameTest do
   use ExUnit.Case, async: true
 
-  alias ConnectFour.{Game, Board}
+  alias ConnectFour.{Game, Board, Winner}
 
   setup do
     %{game: %Game{status: :not_started}}
@@ -106,7 +106,7 @@ defmodule ConnectFour.GameTest do
             |> Board.drop_checker({0, :black})
             |> Board.drop_checker({0, :black})
 
-    assert Game.winner(%{game | board: board}) == {:black, [{0, 0}, {1, 0}, {2, 0}, {3, 0}]}
+    assert Game.winner(%{game | board: board}) |> Winner.to_tuple() == {:black, [{0, 0}, {1, 0}, {2, 0}, {3, 0}]}
   end
 
   test "add_winner adds winner, finishes game", %{game: game} do
@@ -123,7 +123,7 @@ defmodule ConnectFour.GameTest do
 
     game = game |> Game.add_winner
 
-    assert game.winner == {:red, [{0, 3}, {0, 2}, {0, 1}, {0, 0}]}
+    assert game.winner |> Winner.to_tuple() == {:red, [{0, 3}, {0, 2}, {0, 1}, {0, 0}]}
     assert game.status == :over
   end
 
