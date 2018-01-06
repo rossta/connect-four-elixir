@@ -30,9 +30,13 @@ defmodule Joshua.Minimax do
     |> Enum.random()
   end
 
-  def evaluate_board(%Board{last: {_row, _col, color} = last} = board) do
-    {last, evaluate(board, color)}
+  defp evaluate_board(%Board{last: nil} = board) do
+    evaluate_board(board, :red) # starting color irrelevant
   end
+  defp evaluate_board(%Board{last: {_row, _col, color}} = board) do
+    evaluate_board(board, color)
+  end
+  defp evaluate_board(%Board{last: last} = board, color), do: {last, evaluate(board, color)}
 
   defp collect_boards(%Board{} = board), do: board |> collect_boards(0..board.cols |> Enum.to_list, [])
   defp collect_boards(%Board{}, [], boards), do: boards
