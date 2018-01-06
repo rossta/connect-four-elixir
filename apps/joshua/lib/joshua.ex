@@ -1,0 +1,2 @@
+defmodule Joshua do
+end

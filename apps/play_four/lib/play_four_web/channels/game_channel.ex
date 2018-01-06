@@ -35,7 +35,6 @@ defmodule PlayFourWeb.GameChannel do
     %{player_id: player_id, game_id: game_id} = socket.assigns
 
     with {:ok, game} <- ConnectFour.move(game_id, player_id, col) do
-
       broadcast!(socket, "game:updated", game)
 
       {:reply, {:ok, game}, socket}
@@ -52,19 +51,33 @@ defmodule PlayFourWeb.GameChannel do
     end
   end
 
-  # ConnectFour.stop(game_id)
-  def handle_in("game:leave", _msg, socket) do
-    %{game_id: game_id, player_id: player_id} = socket.assigns
+  def handle_in("game:bot", socket) do
+    %{game_id: game_id} = socket.assigns
 
-    Logger.debug "Broadcasting player #{player_id} left game"
+    game = ConnectFour.fetch_game(game_id)
+    player_id = game.black
 
-    ConnectFour.Cache.stop_server(game_id)
-    {:noreply, socket}
+    col = 0
+
+    {:ok, game} = ConnectFour.move(game_id, player_id, col)
+    broadcast!(socket, "game:updated", game)
+
+    {:reply, {:ok, game}, socket}
   end
 
-  # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
-  end
+  # # ConnectFour.stop(game_id)
+  # def handle_in("game:leave", _msg, socket) do
+  #   %{game_id: game_id, player_id: player_id} = socket.assigns
+  #
+  #   Logger.debug "Broadcasting player #{player_id} left game"
+  #
+  #   ConnectFour.Cache.stop_server(game_id)
+  #   {:noreply, socket}
+  # end
+  #
+  # # Channels can be used in a request/response fashion
+  # # by sending replies to requests from the client
+  # def handle_in("ping", payload, socket) do
+  #   {:reply, {:ok, payload}, socket}
+  # end
 end

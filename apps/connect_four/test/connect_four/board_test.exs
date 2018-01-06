@@ -64,10 +64,10 @@ defmodule ConnectFour.BoardTest do
   end
 
   test "checker for cell out-of-bounds", %{board: board} do
-    assert nil == Board.checker(board, {-1, 0})
-    assert nil == Board.checker(board, {0, -1})
-    assert nil == Board.checker(board, {6, 0})
-    assert nil == Board.checker(board, {0, 7})
+    assert {:error, "Out of bounds"} == Board.checker(board, {-1, 0})
+    assert {:error, "Out of bounds"} == Board.checker(board, {0, -1})
+    assert {:error, "Out of bounds"} == Board.checker(board, {6, 0})
+    assert {:error, "Out of bounds"} == Board.checker(board, {0, 7})
   end
 
   test "board load empty", %{board: board} do

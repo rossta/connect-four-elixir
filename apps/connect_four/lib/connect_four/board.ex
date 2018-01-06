@@ -27,12 +27,12 @@ defmodule ConnectFour.Board do
     load_moves(%{Board.new | rows: rows, cols: cols}, color, moves)
   end
 
-  defp load_moves(board, color, []), do: board
+  defp load_moves(board, _color, []), do: board
   defp load_moves(board, color, [move | moves]) do
     load_moves(board |> drop_checker({move, color}), ConnectFour.Game.next_color(color), moves)
   end
 
-  def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col, do: out_of_bounds
+  def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col, do: out_of_bounds()
   def drop_checker(%Board{} = board, {col, color}) do
     row = open_row(board, col)
     board |> land_checker_in_row({row, col, color})
@@ -43,8 +43,8 @@ defmodule ConnectFour.Board do
     %{board | cells: cells, last: checker}
   end
 
-  def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: out_of_bounds
-  def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: out_of_bounds
+  def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: out_of_bounds()
+  def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: out_of_bounds()
   def checker(%Board{cells: cells}, {row, col}) do
     case Map.fetch(cells, cell_key(row, col)) do
       {:ok, checker} -> checker
