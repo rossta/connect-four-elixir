@@ -70,6 +70,10 @@ defmodule ConnectFour.BoardTest do
     assert nil == Board.checker(board, {0, 7})
   end
 
+  test "board load empty", %{board: board} do
+    assert Board.load("black-6:7") == board
+  end
+
   test "board load black:6:7:4433", %{board: board} do
     board = board
             |> Board.drop_checker({4, :black})

@@ -17,10 +17,12 @@ defmodule ConnectFour.Board do
   end
 
   def load(encoded) do
-    [[color], dim, moves] = encoded |> String.split("-") |> Enum.map(&String.split(&1, ":"))
+    [color, dim | rest] = encoded |> String.split("-")
     color = color |> String.to_atom
-    [rows, cols] = dim |> Enum.map(&String.to_integer/1)
-    moves = moves |> Enum.map(&String.to_integer/1)
+
+    [rows, cols] = dim |> String.split(":") |> Enum.map(&String.to_integer/1)
+
+    moves = rest |> Enum.flat_map(&String.split(&1, ":")) |> Enum.map(&String.to_integer/1)
 
     load_moves(%{Board.new | rows: rows, cols: cols}, color, moves)
   end
@@ -30,8 +32,7 @@ defmodule ConnectFour.Board do
     load_moves(board |> drop_checker({move, color}), ConnectFour.Game.next_color(color), moves)
   end
 
-  def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col,
-    do: {:error, "Out of bounds"}
+  def drop_checker(%Board{cols: cols}, {col, _color}) when col < 0 or cols <= col, do: out_of_bounds
   def drop_checker(%Board{} = board, {col, color}) do
     row = open_row(board, col)
     board |> land_checker_in_row({row, col, color})
@@ -42,14 +43,16 @@ defmodule ConnectFour.Board do
     %{board | cells: cells, last: checker}
   end
 
-  def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: nil
-  def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: nil
+  def checker(%Board{rows: rows}, {row, _col}) when row < 0 or rows <= row, do: out_of_bounds
+  def checker(%Board{cols: cols}, {_row, col}) when col < 0 or cols <= col, do: out_of_bounds
   def checker(%Board{cells: cells}, {row, col}) do
     case Map.fetch(cells, cell_key(row, col)) do
       {:ok, checker} -> checker
       :error -> {row, col, :empty}
     end
   end
+
+  defp out_of_bounds, do: {:error, "Out of bounds"}
 
   def color(board, {row, col}) do
     {_, _, checker_color} = checker(board, {row, col})
