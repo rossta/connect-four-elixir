@@ -152,12 +152,7 @@ defmodule PlayFour.Games do
          |> Base.url_encode64()
          |> binary_part(0, @id_length)
 
-    case ConnectFour.Cache.start_server(id) do
-      {:ok, _pid} ->
-        {:ok, %ConnectFour.Game{id: id}}
-      err ->
-        err
-    end
+    ConnectFour.start_game(id)
   end
 
   # @doc """
