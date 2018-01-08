@@ -54,10 +54,6 @@ defmodule ConnectFour.Game do
   end
   def start_game(%Game{} = game), do: game
 
-  def which_player(%Game{red: player_id}, player_id), do: :red
-  def which_player(%Game{black: player_id}, player_id), do: :black
-  def which_player(%Game{}, _player_id), do: nil
-
   def add_winner(%{status: status} = game) when status != :in_play, do: game
   def add_winner(game) do
     game |> determine_winner(game |> winner)
@@ -71,6 +67,10 @@ defmodule ConnectFour.Game do
   defp end_game(game), do: game
 
   def winner(%Game{board: board}), do: Winner.winner(board)
+
+  def next_player(%Game{red: player_id, next: :red}), do: {player_id, :red}
+  def next_player(%Game{black: player_id, next: :black}), do: {player_id, :black}
+  def next_player(%Game{}), do: nil
 
   def next_color(color) when is_nil(color), do: throw "Game not started"
   def next_color(color) when color not in [:red, :black], do: throw "Not a color: #{inspect color}"

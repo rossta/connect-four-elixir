@@ -49,4 +49,18 @@ defmodule ConnectFour do
 
   """
   defdelegate move(game_id, player_id, col), to: ConnectFour.Cache
+
+  @doc """
+  Get next player whose turn it is.
+
+  ## Examples
+
+      iex> ConnectFour.start_game("game_5")
+      iex> ConnectFour.join_game("game_5", "player_1", self())
+      iex> ConnectFour.join_game("game_5", "player_2", self())
+      iex> ConnectFour.next_player("game_5")
+      {"player_1", :red}
+
+  """
+  defdelegate next_player(game_id), to: ConnectFour.Cache
 end

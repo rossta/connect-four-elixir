@@ -78,21 +78,18 @@ defmodule ConnectFour.GameTest do
     assert black == "abc"
   end
 
-  test "which_player for full game", %{game: game} do
-    game = %{game | red: "123", black: "abc"}
-    assert :red == Game.which_player(game, "123")
-    assert :black == Game.which_player(game, "abc")
+  test "next_player red", %{game: game} do
+    game = %{game | red: "123", black: "abc", next: :red}
+    assert {"123", :red} == Game.next_player(game)
   end
 
-  test "which_player for game with one player", %{game: game} do
+  test "next_player for game with one player", %{game: game} do
     game = %{game | red: "123"}
-    assert :red == Game.which_player(game, "123")
-    assert nil == Game.which_player(game, "abc")
+    assert nil == Game.next_player(game)
   end
 
-  test "which_player for empty game", %{game: game} do
-    assert nil == Game.which_player(game, "123")
-    assert nil == Game.which_player(game, "abc")
+  test "next_player for empty game", %{game: game} do
+    assert nil == Game.next_player(game)
   end
 
   test "winner no moves", %{game: game} do

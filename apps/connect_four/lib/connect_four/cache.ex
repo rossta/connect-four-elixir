@@ -28,32 +28,28 @@ defmodule ConnectFour.Cache do
   end
 
   def join_game(game_id, player_id, pid) do
-    with {:ok, game_server} <- server(game_id) do
-      join = Server.join(game_server, player_id, pid)
-      case join do
-        {:ok, _} -> Process.monitor(game_server)
-        {:fail, _} -> true
-      end
-      join
-    else
-      error -> error
+    {:ok, game_server} = server(game_id)
+    join = Server.join(game_server, player_id, pid)
+    case join do
+      {:ok, _} -> Process.monitor(game_server)
+      {:fail, _} -> true
     end
+    join
   end
 
   def fetch_game(game_id) do
-    with {:ok, game_server} <- server(game_id) do
-      Server.game(game_server)
-    else
-      error -> error
-    end
+    {:ok, game_server} = server(game_id)
+    Server.game(game_server)
   end
 
   def move(game_id, player_id, col) do
-    with {:ok, game_server} <- server(game_id) do
-      Server.move(game_server, player_id, col)
-    else
-      error -> error
-    end
+   {:ok, game_server} = server(game_id)
+   Server.move(game_server, player_id, col)
+  end
+
+  def next_player(game_id) do
+   {:ok, game_server} = server(game_id)
+   Server.next_player(game_server)
   end
 
   def stop_server(game_id) do

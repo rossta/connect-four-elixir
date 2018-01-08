@@ -35,6 +35,10 @@ defmodule ConnectFour.Server do
     GenServer.call(game_server, {:move, player_id, column})
   end
 
+  def next_player(game_server) do
+    GenServer.call(game_server, :next_player)
+  end
+
   # Server
 
   def handle_call({:join, player_id, channel_pid}, _from, game) do
@@ -64,6 +68,10 @@ defmodule ConnectFour.Server do
       not_ok ->
         {:reply, not_ok, game}
     end
+  end
+
+  def handle_call(:next_player, _from, game) do
+    {:reply, Game.next_player(game), game}
   end
 
   def handle_info({:DOWN, _ref, :process, _pid, _info} = message, game) do
