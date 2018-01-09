@@ -10,35 +10,35 @@ defmodule Joshua.ScoreTest do
     assert Score.evaluate(board, :black) == 0
   end
 
-  test "max is equal to sum of all row, col, and diag combos" do
-    combos_count = Score.max(Board.new())
-    all_row_combos = 24
-    all_col_combos = 21
-    all_diag_combos = 24
+  test "max is equal to sum of all row, col, and diag segments" do
+    segments_count = Score.max(Board.new())
+    all_row_segments = 24
+    all_col_segments = 21
+    all_diag_segments = 24
 
-    assert all_row_combos + all_col_combos + all_diag_combos == combos_count
+    assert all_row_segments + all_col_segments + all_diag_segments == segments_count
   end
 
-  test "evaluate_combo empty" do
-    assert [:empty, :empty, :empty, :empty] |> Score.evaluate_combo(:red) == 0
+  test "evaluate_segment empty" do
+    assert [:empty, :empty, :empty, :empty] |> Score.evaluate_segment(:red) == 0
   end
 
-  test "evaluate_combo some friendlies" do
-    assert [:red, :empty, :empty, :empty] |> Score.evaluate_combo(:red) == 1
-    assert [:red, :red, :empty, :empty] |> Score.evaluate_combo(:red) == 20
-    assert [:red, :red, :red, :empty] |> Score.evaluate_combo(:red) == 300
-    assert [:red, :red, :red, :red] |> Score.evaluate_combo(:red) == 4000
+  test "evaluate_segment some friendlies" do
+    assert [:red, :empty, :empty, :empty] |> Score.evaluate_segment(:red) == 1
+    assert [:red, :red, :empty, :empty] |> Score.evaluate_segment(:red) == 20
+    assert [:red, :red, :red, :empty] |> Score.evaluate_segment(:red) == 300
+    assert [:red, :red, :red, :red] |> Score.evaluate_segment(:red) == 4000
   end
 
-  test "evaluate combo some enemies" do
-    assert [:black, :empty, :empty, :empty] |> Score.evaluate_combo(:red) == -1
-    assert [:black, :black, :empty, :empty] |> Score.evaluate_combo(:red) == -20
-    assert [:black, :black, :black, :empty] |> Score.evaluate_combo(:red) == -300
-    assert [:black, :black, :black, :black] |> Score.evaluate_combo(:red) == -4000
+  test "evaluate segment some enemies" do
+    assert [:black, :empty, :empty, :empty] |> Score.evaluate_segment(:red) == -1
+    assert [:black, :black, :empty, :empty] |> Score.evaluate_segment(:red) == -20
+    assert [:black, :black, :black, :empty] |> Score.evaluate_segment(:red) == -300
+    assert [:black, :black, :black, :black] |> Score.evaluate_segment(:red) == -4000
   end
 
-  test "evaluate combo block move" do
-    assert [:black, :red, :empty, :empty] |> Score.evaluate_combo(:red) == 0
+  test "evaluate segment block move" do
+    assert [:black, :red, :empty, :empty] |> Score.evaluate_segment(:red) == 0
   end
 
   test "evaluate board 1 move" do

@@ -1,13 +1,15 @@
 defmodule Joshua.Minimax do
-  alias Joshua.Score
-  alias ConnectFour.{Board, Game}
+  alias Joshua.{Move, Score}
+  alias ConnectFour.{Board, Game, Winner}
   require Logger
 
   def minimax(%Board{} = board, 0), do: evaluate_board(board)
-  def minimax(%Board{} = board, depth) do
+  def minimax(%Board{} = board, depth), do: minimax(board, depth, Winner.winner(board))
+  def minimax(%Board{} = board, depth, %Winner{}), do: evaluate_board(board)
+  def minimax(%Board{} = board, depth, nil) do
     Logger.debug "minimax start (#{depth}) --------------"
     board
-    |> collect_boards()
+    |> Move.child_boards()
     |> evaluate_boards(board, depth)
   end
 
@@ -35,22 +37,4 @@ defmodule Joshua.Minimax do
     evaluate_board(board, color)
   end
   defp evaluate_board(%Board{last: last} = board, color), do: {last, Score.evaluate(board, color)}
-
-  defp collect_boards(%Board{} = board), do: board |> collect_boards(0..board.cols |> Enum.to_list, [])
-  defp collect_boards(%Board{}, [], boards), do: boards
-  defp collect_boards(%Board{last: {_row, _col, color}} = board, cols, boards) do
-    collect_boards(board, cols, boards, color)
-  end
-  defp collect_boards(%Board{last: nil} = board, cols, boards) do
-    collect_boards(board, cols, boards, :black)
-  end
-  defp collect_boards(%Board{} = board, [col |cols], boards, opponent) do
-    color = Game.next_color(opponent)
-    boards = Board.drop_checker(board, {col, color}) |> collect_board(boards)
-    collect_boards(board, cols, boards)
-  end
-
-  defp collect_board({:error, _}, boards), do: boards
-  defp collect_board(board, boards), do: [board | boards]
-
 end

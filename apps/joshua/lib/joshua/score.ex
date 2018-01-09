@@ -1,5 +1,6 @@
 defmodule Joshua.Score do
-  alias ConnectFour.{Board, Game}
+  alias Joshua.Move
+  alias ConnectFour.{Board, Game, Winner}
 
   @connect 4
   @offset @connect-1
@@ -8,10 +9,7 @@ defmodule Joshua.Score do
   require Logger
 
   def evaluate(%Board{} = board, color) do
-    evaluate_rows(board, color) +
-    evaluate_cols(board, color) +
-    evaluate_rising_diags(board, color) +
-    evaluate_falling_diags(board, color)
+    evaluate_all_segments(board, color) - evaluate_all_segments(board, Game.next_color(color))
   end
 
   def max(%Board{rows: rows, cols: cols}) do
@@ -20,17 +18,29 @@ defmodule Joshua.Score do
     ((rows - @offset) * (cols - @offset) * 2)
   end
 
-  def evaluate_combo(colors, color) do
-    opponent = Game.next_color(color)
-    cond do
-      Enum.member?(colors, color) && Enum.member?(colors, opponent) -> 0
-      Enum.member?(colors, color) -> weighted_count(Enum.count(colors, fn c -> c == color end))
-      true -> weighted_count(Enum.count(colors, fn c -> c != :empty end)) * -1
+  defp evaluate_all_segments(board, color) do
+    evaluate_rows(board, color) +
+    evaluate_cols(board, color) +
+    evaluate_rising_diags(board, color) +
+    evaluate_falling_diags(board, color)
+  end
+
+  def evaluate_segment(colors, color) do
+    in_a_row_4 = @connect-0
+    in_a_row_3 = @connect-1
+    in_a_row_2 = @connect-2
+    in_a_row_1 = @connect-3
+
+    case Enum.count(colors, fn c -> c == color || c == :empty end) do
+      ^in_a_row_4 -> 1_000_000
+      ^in_a_row_3 -> 4
+      ^in_a_row_2 -> 1
+      ^in_a_row_1 -> 0
+      _ -> 0
     end
   end
-  def weighted_count(count), do: count * :math.pow(10, count)
 
-  defp all_row_combos(%Board{rows: rows, cols: cols} = board) do
+  defp all_row_segments(%Board{rows: rows, cols: cols} = board) do
     for row <- 0..rows-1, first <- 0..cols-@connect do
       (for col <- first..first+@offset, do: Board.color(board, {row, col}))
     end
@@ -38,11 +48,11 @@ defmodule Joshua.Score do
 
   defp evaluate_rows(%Board{} = board, color) do
     board
-    |> all_row_combos()
-    |> evaluate_combos(color)
+    |> all_row_segments()
+    |> evaluate_segments(color)
   end
 
-  defp all_col_combos(%Board{rows: rows, cols: cols} = board) do
+  defp all_col_segments(%Board{rows: rows, cols: cols} = board) do
     for col <- 0..cols-1, first <- 0..rows-@connect do
       (for row <- first..first+@offset, do: Board.color(board, {row, col}))
     end
@@ -50,11 +60,11 @@ defmodule Joshua.Score do
 
   defp evaluate_cols(%Board{} = board, color) do
     board
-    |> all_col_combos()
-    |> evaluate_combos(color)
+    |> all_col_segments()
+    |> evaluate_segments(color)
   end
 
-  def all_rising_diag_combos(%Board{rows: rows, cols: cols} = board) do
+  def all_rising_diag_segments(%Board{rows: rows, cols: cols} = board) do
     for first_row <- 0..rows-@connect, first_col <- 0..cols-@connect  do
       Enum.zip(first_row..first_row+@offset, first_col..first_col+@offset)
       |> Enum.map(fn {row, col} -> Board.color(board, {row, col}) end)
@@ -63,11 +73,11 @@ defmodule Joshua.Score do
 
   defp evaluate_rising_diags(%Board{} = board, color) do
     board
-    |> all_rising_diag_combos()
-    |> evaluate_combos(color)
+    |> all_rising_diag_segments()
+    |> evaluate_segments(color)
   end
 
-  def all_falling_diag_combos(%Board{rows: rows, cols: cols} = board) do
+  def all_falling_diag_segments(%Board{rows: rows, cols: cols} = board) do
     for first_row <- @offset..rows-1, first_col <- 0..cols-@connect  do
       Enum.zip(first_row..first_row-@offset, first_col..first_col+@offset)
       |> Enum.map(fn {row, col} -> Board.color(board, {row, col}) end)
@@ -76,11 +86,11 @@ defmodule Joshua.Score do
 
   defp evaluate_falling_diags(%Board{} = board, color) do
     board
-    |> all_falling_diag_combos()
-    |> evaluate_combos(color)
+    |> all_falling_diag_segments()
+    |> evaluate_segments(color)
   end
 
-  defp evaluate_combos(color_sets, color) do
-    color_sets |> Enum.map(&evaluate_combo(&1, color)) |> Enum.sum()
+  defp evaluate_segments(color_sets, color) do
+    color_sets |> Enum.map(&evaluate_segment(&1, color)) |> Enum.sum()
   end
 end
