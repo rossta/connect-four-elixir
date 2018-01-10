@@ -1,11 +1,11 @@
 defmodule Joshua.Minimax do
   alias Joshua.{Move, Score}
-  alias ConnectFour.{Board, Game, Winner}
+  alias ConnectFour.{Board, Winner}
   require Logger
 
   def minimax(%Board{} = board, 0), do: evaluate_board(board)
   def minimax(%Board{} = board, depth), do: minimax(board, depth, Winner.winner(board))
-  def minimax(%Board{} = board, depth, %Winner{}), do: evaluate_board(board)
+  def minimax(%Board{} = board, _depth, %Winner{}), do: evaluate_board(board)
   def minimax(%Board{} = board, depth, nil) do
     Logger.debug "minimax start (#{depth}) --------------"
     board

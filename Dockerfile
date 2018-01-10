@@ -1,21 +1,18 @@
 FROM elixir:1.5.3
-ENV APP_HOME /app
-RUN mkdir $APP_HOME
 
-RUN apt-get update -qq && apt-get install -y build-essential
-
+RUN apt-get update -qq
+RUN apt-get install -y build-essential
 RUN apt-get install -y -q apt-utils
-
 RUN apt-get install -y -q inotify-tools
-
-# PostgreSQL
-RUN apt-get install -y libpq-dev
 
 # Install the Phoenix framework itself
 RUN mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
 
-# Set directory for our app
+# Set directory for our app ENV APP_HOME /app
+ENV APP_HOME /app
+RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
+
 COPY mix.exs mix.lock $APP_HOME/
 
 # Install hex

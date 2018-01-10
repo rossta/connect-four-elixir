@@ -1,10 +1,8 @@
 defmodule Joshua.Score do
-  alias Joshua.Move
-  alias ConnectFour.{Board, Game, Winner}
+  alias ConnectFour.{Board, Game}
 
   @connect 4
   @offset @connect-1
-  @weight 100
 
   require Logger
 

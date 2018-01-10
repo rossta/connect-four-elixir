@@ -4,7 +4,6 @@ defmodule TextClient do
   """
 
   alias TextClient.{State, Player}
-  alias ConnectFour.{Game, Board}
 
   @id_length 8
 
@@ -15,7 +14,7 @@ defmodule TextClient do
   end
 
   def new_game() do
-    ConnectFour.start_game(new_id)
+    ConnectFour.start_game(new_id())
   end
 
   def new_id do
@@ -26,8 +25,8 @@ defmodule TextClient do
   end
 
   def setup_state({:ok, game}) do
-    player_id = new_id
-    client_id = new_id
+    player_id = new_id()
+    client_id = new_id()
     ConnectFour.join_game(game.id, player_id, self())
     {:ok, game} = ConnectFour.join_game(game.id, client_id, self())
 
