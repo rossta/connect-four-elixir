@@ -15,6 +15,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :arcade, ArcadeWeb.Endpoint,
   load_from_system_env: true,
+  http: [:inet6, port: {:system, "PORT"}],
   url: [host: "localhost", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,

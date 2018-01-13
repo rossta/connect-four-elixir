@@ -2,25 +2,9 @@ version: "2"
 
 services:
   web:
-    build: .
-    command: mix phx.server
+    image: "rossta/connect-four:0.0.1"
+    command: ./bin/connect_four_elixir foreground
     environment:
-      MIX_ENV: dev
-      PORT: "4000"
-    expose:
-      - "4000"
+      PORT: 4000
     ports:
       - 4000:4000
-    volumes:
-      - .:/app
-
-  test:
-    image: connectfourphoenix_web
-    command: mix test
-    environment:
-      MIX_ENV: test
-      PORT: 4001
-    volumes_from:
-      - web
-    ports:
-      - 4001:4001
