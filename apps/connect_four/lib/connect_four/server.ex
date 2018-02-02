@@ -10,6 +10,15 @@ defmodule ConnectFour.Server do
     GenServer.start_link(__MODULE__, game_id, name: via_tuple(game_id))
   end
 
+  def child_spec(game_id) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [game_id]},
+      type: :worker,
+      restart: :permanent,
+    }
+  end
+
   def init(game_id) do
     {:ok, %Game{id: game_id}}
   end
