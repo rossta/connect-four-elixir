@@ -5,7 +5,7 @@ defmodule ConnectFour.ServerSupervisor do
 
   alias ConnectFour
 
-  def start_link do
+  def start_link(_) do
     DynamicSupervisor.start_link(__MODULE__, nil, name: :game_server_supervisor)
   end
 
