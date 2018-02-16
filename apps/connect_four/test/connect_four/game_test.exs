@@ -9,12 +9,7 @@ defmodule ConnectFour.GameTest do
 
   defp game_in_play(%{game: game}) do
     %{
-      game:  %{ game |
-        status: :in_play,
-        red: "player_1",
-        black: "player_2",
-        next: :red,
-      }
+      game: %{game | status: :in_play, red: "player_1", black: "player_2", next: :red}
     }
   end
 
@@ -97,28 +92,33 @@ defmodule ConnectFour.GameTest do
   end
 
   test "winner four in column", %{game: game} do
-    board = game.board
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({0, :black})
+    board =
+      game.board
+      |> Board.drop_checker({0, :black})
+      |> Board.drop_checker({0, :black})
+      |> Board.drop_checker({0, :black})
+      |> Board.drop_checker({0, :black})
 
-    assert Game.winner(%{game | board: board}) |> Winner.to_tuple() == {:black, [{0, 0}, {1, 0}, {2, 0}, {3, 0}]}
+    assert Game.winner(%{game | board: board}) |> Winner.to_tuple() ==
+             {:black, [{0, 0}, {1, 0}, {2, 0}, {3, 0}]}
   end
 
   test "add_winner adds winner, finishes game", %{game: game} do
     game = %{game | status: :in_play}
-    board = game.board
-            |> Board.drop_checker({0, :red})
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({3, :red})
-            |> Board.drop_checker({2, :red})
+
+    board =
+      game.board
+      |> Board.drop_checker({0, :red})
+      |> Board.drop_checker({1, :red})
+      |> Board.drop_checker({3, :red})
+      |> Board.drop_checker({2, :red})
+
     game = %{game | board: board}
 
     assert game.winner == nil
     assert game.status == :in_play
 
-    game = game |> Game.add_winner
+    game = game |> Game.add_winner()
 
     assert game.winner |> Winner.to_tuple() == {:red, [{0, 3}, {0, 2}, {0, 1}, {0, 0}]}
     assert game.status == :over
@@ -128,7 +128,7 @@ defmodule ConnectFour.GameTest do
     game = %{game | status: :in_play}
     assert game.winner == nil
 
-    game = game |> Game.add_winner
+    game = game |> Game.add_winner()
 
     assert game.winner == nil
     assert game.status == :in_play
@@ -136,17 +136,19 @@ defmodule ConnectFour.GameTest do
 
   test "add_winner no in_play", %{game: game} do
     game = %{game | status: :in_play}
-    board = game.board
-            |> Board.drop_checker({0, :red})
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({3, :red})
-            |> Board.drop_checker({2, :red})
 
-    game = %{game | board: board, status: :not_started} |> Game.add_winner
+    board =
+      game.board
+      |> Board.drop_checker({0, :red})
+      |> Board.drop_checker({1, :red})
+      |> Board.drop_checker({3, :red})
+      |> Board.drop_checker({2, :red})
+
+    game = %{game | board: board, status: :not_started} |> Game.add_winner()
 
     assert game.winner == nil
 
-    game = %{game | status: :over} |> Game.add_winner
+    game = %{game | status: :over} |> Game.add_winner()
 
     assert game.winner == nil
   end

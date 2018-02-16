@@ -9,7 +9,7 @@ defmodule Arcade.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(ArcadeWeb.Endpoint, []),
+      supervisor(ArcadeWeb.Endpoint, [])
       # Start your own worker by calling: Arcade.Worker.start_link(arg1, arg2, arg3)
       # worker(Arcade.Worker, [arg1, arg2, arg3]),
     ]

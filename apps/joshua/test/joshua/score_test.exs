@@ -44,24 +44,24 @@ defmodule Joshua.ScoreTest do
   test "evaluate board 1 move" do
     board = Board.load("black-6:7-0")
 
-    assert Score.evaluate((board |> Board.drop_checker({0, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({1, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({2, :red})), :red) == 2
-    assert Score.evaluate((board |> Board.drop_checker({3, :red})), :red) == 4
-    assert Score.evaluate((board |> Board.drop_checker({4, :red})), :red) == 2
-    assert Score.evaluate((board |> Board.drop_checker({5, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({6, :red})), :red) == 0
+    assert Score.evaluate(board |> Board.drop_checker({0, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({1, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({2, :red}), :red) == 2
+    assert Score.evaluate(board |> Board.drop_checker({3, :red}), :red) == 4
+    assert Score.evaluate(board |> Board.drop_checker({4, :red}), :red) == 2
+    assert Score.evaluate(board |> Board.drop_checker({5, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({6, :red}), :red) == 0
   end
 
   test "evaluate board winning move" do
     board = Board.load("black-6:7-0")
 
-    assert Score.evaluate((board |> Board.drop_checker({0, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({1, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({2, :red})), :red) == 2
-    assert Score.evaluate((board |> Board.drop_checker({3, :red})), :red) == 4
-    assert Score.evaluate((board |> Board.drop_checker({4, :red})), :red) == 2
-    assert Score.evaluate((board |> Board.drop_checker({5, :red})), :red) == 1
-    assert Score.evaluate((board |> Board.drop_checker({6, :red})), :red) == 0
+    assert Score.evaluate(board |> Board.drop_checker({0, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({1, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({2, :red}), :red) == 2
+    assert Score.evaluate(board |> Board.drop_checker({3, :red}), :red) == 4
+    assert Score.evaluate(board |> Board.drop_checker({4, :red}), :red) == 2
+    assert Score.evaluate(board |> Board.drop_checker({5, :red}), :red) == 1
+    assert Score.evaluate(board |> Board.drop_checker({6, :red}), :red) == 0
   end
 end

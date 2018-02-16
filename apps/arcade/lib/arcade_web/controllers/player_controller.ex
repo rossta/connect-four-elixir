@@ -3,7 +3,7 @@ defmodule ArcadeWeb.PlayerController do
 
   alias Arcade.Games
 
-  action_fallback ArcadeWeb.FallbackController
+  action_fallback(ArcadeWeb.FallbackController)
 
   def create(conn, %{}) do
     with {:ok, %ConnectFour.Player{} = player} <- Games.create_player() do

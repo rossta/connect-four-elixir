@@ -4,11 +4,11 @@ defmodule ArcadeWeb.PlayerSocket do
 
   ## Channels
   # channel "room:*", ArcadeWeb.RoomChannel
-  channel "lobby", ArcadeWeb.LobbyChannel
-  channel "game:*", ArcadeWeb.GameChannel
+  channel("lobby", ArcadeWeb.LobbyChannel)
+  channel("game:*", ArcadeWeb.GameChannel)
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
@@ -26,6 +26,7 @@ defmodule ArcadeWeb.PlayerSocket do
     Logger.info("Socket connected: " <> player_id)
     {:ok, assign(socket, :player_id, player_id)}
   end
+
   def connect(_params, socket) do
     {:ok, socket}
   end

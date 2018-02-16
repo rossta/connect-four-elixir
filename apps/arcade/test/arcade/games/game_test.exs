@@ -8,11 +8,12 @@ defmodule Arcade.Games.GameTest do
   end
 
   test "poison encoding", %{game: game} do
-    json = game
-           |> Game.add_player("abc")
-           |> Game.add_player("xyz")
-           |> Poison.encode!
-           |> Poison.Parser.parse!
+    json =
+      game
+      |> Game.add_player("abc")
+      |> Game.add_player("xyz")
+      |> Poison.encode!()
+      |> Poison.Parser.parse!()
 
     assert json["black"] == "xyz"
     assert json["red"] == "abc"

@@ -5,7 +5,7 @@ defmodule ArcadeWeb.GameChannel do
   alias ConnectFour.Game
 
   def join("game:" <> game_id, _payload, socket) do
-    Logger.debug "Joining game channel #{game_id}", game_id: game_id
+    Logger.debug("Joining game channel #{game_id}", game_id: game_id)
 
     player_id = socket.assigns.player_id
 
@@ -14,7 +14,7 @@ defmodule ArcadeWeb.GameChannel do
       {:ok, game, assign(socket, :game_id, game_id)}
     else
       {:error, reason} ->
-        Logger.debug "Error while joining game #{game_id}: #{reason}"
+        Logger.debug("Error while joining game #{game_id}: #{reason}")
         {:error, %{reason: reason}}
     end
   end
@@ -46,7 +46,7 @@ defmodule ArcadeWeb.GameChannel do
         {:stop, :shutdown, {:error, %{reason: reason}}, socket}
 
       other ->
-        Logger.error "Unrecognized response game:move #{inspect other}"
+        Logger.error("Unrecognized response game:move #{inspect(other)}")
         {:reply, {:ok, other}, socket}
     end
   end

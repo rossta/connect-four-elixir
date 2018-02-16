@@ -15,6 +15,6 @@ defmodule ArcadeWeb.FallbackController do
   def call(conn, arg) do
     conn
     |> put_status(:unprocessable_entity)
-    |> render(ArcadeWeb.ErrorView, inspect arg)
+    |> render(ArcadeWeb.ErrorView, inspect(arg))
   end
 end

@@ -22,6 +22,7 @@ defmodule ConnectFour.Client do
     case ServerSupervisor.start_child(game_id) do
       {:ok, pid} ->
         {:ok, pid}
+
       {:error, {:already_started, pid}} ->
         {:ok, pid}
     end
@@ -30,10 +31,12 @@ defmodule ConnectFour.Client do
   def join_game(game_id, player_id, pid) do
     {:ok, game_server} = server(game_id)
     join = Server.join(game_server, player_id, pid)
+
     case join do
       {:ok, _} -> Process.monitor(game_server)
       {:fail, _} -> true
     end
+
     join
   end
 
@@ -43,13 +46,13 @@ defmodule ConnectFour.Client do
   end
 
   def move(game_id, player_id, col) do
-   {:ok, game_server} = server(game_id)
-   Server.move(game_server, player_id, col)
+    {:ok, game_server} = server(game_id)
+    Server.move(game_server, player_id, col)
   end
 
   def next_player(game_id) do
-   {:ok, game_server} = server(game_id)
-   Server.next_player(game_server)
+    {:ok, game_server} = server(game_id)
+    Server.next_player(game_server)
   end
 
   def stop_server(game_id) do
@@ -58,6 +61,7 @@ defmodule ConnectFour.Client do
 
   defp handle_stop_server({:error, _reason}), do: :ok
   defp handle_stop_server(:ok), do: :ok
+
   defp handle_stop_server({:ok, game_server}) do
     ServerSupervisor.terminate_child(game_server)
     |> handle_stop_server

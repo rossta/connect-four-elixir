@@ -10,7 +10,7 @@ defmodule ConnectFour.ServerSupervisor do
   end
 
   def start_child(game_id) do
-    Logger.debug "Starting game dynamic server supervisor for game #{game_id}"
+    Logger.debug("Starting game dynamic server supervisor for game #{game_id}")
 
     DynamicSupervisor.start_child(:game_server_supervisor, {ConnectFour.Server, game_id})
   end

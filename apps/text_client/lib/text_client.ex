@@ -19,7 +19,7 @@ defmodule TextClient do
 
   def new_id do
     @id_length
-    |> :crypto.strong_rand_bytes
+    |> :crypto.strong_rand_bytes()
     |> Base.url_encode64()
     |> binary_part(0, @id_length)
   end

@@ -5,15 +5,15 @@ defmodule ConnectFour.BoardTest do
   alias ConnectFour.Board
 
   setup do
-    %{board: Board.new}
+    %{board: Board.new()}
   end
 
   test "new sets defaults" do
-    %{rows: rows, cols: cols, cells: cells} = Board.new
+    %{rows: rows, cols: cols, cells: cells} = Board.new()
 
     assert rows == 6
     assert cols == 7
-    assert cells == Map.new
+    assert cells == Map.new()
   end
 
   test "drop_checker to board cells by color and column", %{board: board} do
@@ -26,11 +26,12 @@ defmodule ConnectFour.BoardTest do
   end
 
   test "drop_checker multiple", %{board: board} do
-    board = board
-            |> Board.drop_checker({0, :black})
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({1, :black})
-            |> Board.drop_checker({2, :red})
+    board =
+      board
+      |> Board.drop_checker({0, :black})
+      |> Board.drop_checker({1, :red})
+      |> Board.drop_checker({1, :black})
+      |> Board.drop_checker({2, :red})
 
     assert {0, 0, :black} == Board.checker(board, {0, 0})
     assert {0, 1, :red} == Board.checker(board, {0, 1})
@@ -41,9 +42,10 @@ defmodule ConnectFour.BoardTest do
   test "drop_checker in full column", %{board: board} do
     board = %{board | rows: 2}
 
-    board = board
-            |> Board.drop_checker({1, :red})
-            |> Board.drop_checker({1, :black})
+    board =
+      board
+      |> Board.drop_checker({1, :red})
+      |> Board.drop_checker({1, :black})
 
     assert {:error, "Column full"} == Board.drop_checker(board, {1, :red})
   end
@@ -75,11 +77,12 @@ defmodule ConnectFour.BoardTest do
   end
 
   test "board load black:6:7:4433", %{board: board} do
-    board = board
-            |> Board.drop_checker({4, :black})
-            |> Board.drop_checker({4, :red})
-            |> Board.drop_checker({3, :black})
-            |> Board.drop_checker({3, :red})
+    board =
+      board
+      |> Board.drop_checker({4, :black})
+      |> Board.drop_checker({4, :red})
+      |> Board.drop_checker({3, :black})
+      |> Board.drop_checker({3, :red})
 
     assert Board.load("black-6:7-4:4:3:3") == board
   end

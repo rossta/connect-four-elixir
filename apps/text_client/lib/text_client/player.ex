@@ -2,8 +2,8 @@ defmodule TextClient.Player do
   alias TextClient.{Prompter, State}
   require Logger
 
-  def play(%State{game: %{ status: :over, winner: winner }}) do
-    IO.puts "Game over! #{winner.color} wins."
+  def play(%State{game: %{status: :over, winner: winner}}) do
+    IO.puts("Game over! #{winner.color} wins.")
     exit(:normal)
   end
 

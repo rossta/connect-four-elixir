@@ -4,7 +4,7 @@ defmodule ConnectFour.Supervisor do
   def init(:ok) do
     children = [
       {Registry, keys: :unique, name: :game_server_registry},
-      ConnectFour.ServerSupervisor,
+      ConnectFour.ServerSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

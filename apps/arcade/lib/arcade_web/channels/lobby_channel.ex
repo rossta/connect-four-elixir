@@ -15,7 +15,7 @@ defmodule ArcadeWeb.LobbyChannel do
   # broadcast to everyone in the current topic (lobby:lobby).
   def handle_in("new_game", _payload, socket) do
     # broadcast socket, "new_game", payload
-    Logger.info "LobbyChannel.handle_in new_game not implemented"
+    Logger.info("LobbyChannel.handle_in new_game not implemented")
     {:noreply, socket}
   end
 

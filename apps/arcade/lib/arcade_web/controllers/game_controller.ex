@@ -3,10 +3,10 @@ defmodule ArcadeWeb.GameController do
 
   alias Arcade.Games
 
-  action_fallback ArcadeWeb.FallbackController
+  action_fallback(ArcadeWeb.FallbackController)
 
   def index(conn, %{}) do
-    text conn, "ok"
+    text(conn, "ok")
   end
 
   def create(conn, %{}) do

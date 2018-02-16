@@ -3,11 +3,12 @@ defmodule TextClient.Prompter do
   require Logger
 
   def summary(%State{game: game} = state) do
-    IO.puts [
+    IO.puts([
       "\n",
-      "#{inspect game.board}\n",
+      "#{inspect(game.board)}\n",
       "\n"
-    ]
+    ])
+
     state
   end
 
@@ -19,7 +20,8 @@ defmodule TextClient.Prompter do
 
   def accept_move(%State{client_id: client_id, game: game} = state, {client_id, color}) do
     IO.puts("Computer's move [#{color}]...")
-    Logger.debug "accept_move: #{inspect game}"
+    Logger.debug("accept_move: #{inspect(game)}")
+
     Joshua.pick_move(game, color)
     |> add_move(client_id, state)
   end
@@ -40,11 +42,13 @@ defmodule TextClient.Prompter do
 
   defp check_input(input, {_player_id, color} = turn, %State{} = state) do
     input = String.trim(input)
+
     cond do
       input =~ ~r/\A[0-6]\z/ ->
-        {input |> String.to_integer, color}
+        {input |> String.to_integer(), color}
+
       true ->
-        IO.puts "Please enter a valid column number"
+        IO.puts("Please enter a valid column number")
         accept_move(state, turn)
     end
   end

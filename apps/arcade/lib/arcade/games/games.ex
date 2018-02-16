@@ -15,10 +15,11 @@ defmodule Arcade.Games do
 
   """
   def create_player(_attrs \\ %{}) do
-    id = @id_length
-         |> :crypto.strong_rand_bytes
-         |> Base.url_encode64()
-         |> binary_part(0, @id_length)
+    id =
+      @id_length
+      |> :crypto.strong_rand_bytes()
+      |> Base.url_encode64()
+      |> binary_part(0, @id_length)
 
     {:ok, %ConnectFour.Player{id: id}}
   end
@@ -33,10 +34,11 @@ defmodule Arcade.Games do
 
   """
   def create_game(_attrs \\ %{}) do
-    id = @id_length
-         |> :crypto.strong_rand_bytes
-         |> Base.url_encode64()
-         |> binary_part(0, @id_length)
+    id =
+      @id_length
+      |> :crypto.strong_rand_bytes()
+      |> Base.url_encode64()
+      |> binary_part(0, @id_length)
 
     ConnectFour.start_game(id)
   end

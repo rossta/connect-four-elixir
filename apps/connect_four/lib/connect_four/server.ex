@@ -5,7 +5,7 @@ defmodule ConnectFour.Server do
   alias ConnectFour.Game
 
   def start_link(game_id) do
-    Logger.debug "Starting game server."
+    Logger.debug("Starting game server.")
 
     GenServer.start_link(__MODULE__, game_id, name: via_tuple(game_id))
   end
@@ -15,7 +15,7 @@ defmodule ConnectFour.Server do
       id: __MODULE__,
       start: {__MODULE__, :start_link, [game_id]},
       type: :worker,
-      restart: :permanent,
+      restart: :permanent
     }
   end
 
@@ -27,6 +27,7 @@ defmodule ConnectFour.Server do
     case Registry.lookup(:game_server_registry, game_id) do
       [] ->
         :undefined
+
       [{pid, _}] ->
         pid
     end
@@ -84,8 +85,8 @@ defmodule ConnectFour.Server do
   end
 
   def handle_info({:DOWN, _ref, :process, _pid, _info} = message, game) do
-    Logger.info "Handling disconnected ref in Game #{game.id}"
-    Logger.info "#{inspect message}"
+    Logger.info("Handling disconnected ref in Game #{game.id}")
+    Logger.info("#{inspect(message)}")
 
     # {:stop, :normal, game}
     {:noreply, game}
