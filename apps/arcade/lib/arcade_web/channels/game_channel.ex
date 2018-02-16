@@ -71,7 +71,7 @@ defmodule ArcadeWeb.GameChannel do
   #
   #   Logger.debug "Broadcasting player #{player_id} left game"
   #
-  #   ConnectFour.Cache.stop_server(game_id)
+  #   ConnectFour.Client.stop_server(game_id)
   #   {:noreply, socket}
   # end
   #

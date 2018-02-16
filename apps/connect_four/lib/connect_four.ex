@@ -12,7 +12,7 @@ defmodule ConnectFour do
       {:ok, %ConnectFour.Game{id: "game_1"}}
 
   """
-  defdelegate start_game(game_id), to: ConnectFour.Cache
+  defdelegate start_game(game_id), to: ConnectFour.Client
 
   @doc """
   Join an existing existing game by game id, player id, and process id
@@ -24,7 +24,7 @@ defmodule ConnectFour do
       {:ok, %ConnectFour.Game{id: "game_2", red: "player"}}
 
   """
-  defdelegate join_game(game_id, player_id, pid), to: ConnectFour.Cache
+  defdelegate join_game(game_id, player_id, pid), to: ConnectFour.Client
 
   @doc """
   Fetch game state by game id.
@@ -36,7 +36,7 @@ defmodule ConnectFour do
       %ConnectFour.Game{id: "game_3"}
 
   """
-  defdelegate fetch_game(game_id), to: ConnectFour.Cache
+  defdelegate fetch_game(game_id), to: ConnectFour.Client
 
   @doc """
   Make game move by game id, player id, and column.
@@ -48,7 +48,7 @@ defmodule ConnectFour do
       {:foul, "Game is not in play"}
 
   """
-  defdelegate move(game_id, player_id, col), to: ConnectFour.Cache
+  defdelegate move(game_id, player_id, col), to: ConnectFour.Client
 
   @doc """
   Get next player whose turn it is.
@@ -62,5 +62,5 @@ defmodule ConnectFour do
       {"player_1", :red}
 
   """
-  defdelegate next_player(game_id), to: ConnectFour.Cache
+  defdelegate next_player(game_id), to: ConnectFour.Client
 end

@@ -1,4 +1,4 @@
-defmodule ConnectFour.Cache do
+defmodule ConnectFour.Client do
   require Logger
 
   alias ConnectFour.{Server, ServerSupervisor}

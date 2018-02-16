@@ -4,7 +4,7 @@ defmodule ArcadeWeb.GameChannelTest do
   alias ArcadeWeb.GameChannel
 
   setup do
-    {:ok, game_server} = ConnectFour.Cache.start_server("game_id")
+    {:ok, game_server} = ConnectFour.Client.start_server("game_id")
     {:ok, _, socket} =
       socket("player_socket:player_id", %{player_id: "player_1"})
       |> subscribe_and_join(GameChannel, "game:game_id")
